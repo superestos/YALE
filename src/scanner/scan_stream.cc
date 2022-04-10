@@ -1,6 +1,6 @@
 #include "scanner/scan_stream.h"
 
-std::string& TokenStream::next() {
+std::string& ScanStream::next() {
     if (read_) {
         stream_ >> buffer_;
     }
@@ -18,4 +18,8 @@ std::string& TokenStream::next() {
     read_ = buffer_.empty();
     
     return token_;
+}
+
+bool ScanStream::is_parentheses(char c) {
+    return c == '(' || c == ')';
 }

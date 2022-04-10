@@ -1,16 +1,16 @@
 #include "scanner/scanner.h"
 
-std::vector<Token> Syntax::tokens() const {
+std::vector<Token> Scanner::tokens() const {
     return tokens_;
 }
 
-void Syntax::read() {
+void Scanner::read() {
     std::string name;
     while ((name = tokenStream_.next()) != "") {
         tokens_.emplace_back(name);
     }
 }
 
-void Syntax::clear() {
+void Scanner::clear() {
     tokens_.clear();
 }

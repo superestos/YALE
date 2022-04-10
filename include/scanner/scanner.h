@@ -5,9 +5,9 @@
 #include "scanner/token.h"
 #include "scanner/scan_stream.h"
 
-class Syntax {
+class Scanner {
 public:
-    Syntax(std::istream& stream): tokenStream_{stream} {
+    Scanner(std::istream& stream): tokenStream_{stream} {
         read();
     }
 
@@ -16,6 +16,6 @@ public:
     void clear();
 
 private:
-    TokenStream tokenStream_;
+    ScanStream tokenStream_;
     std::vector<Token> tokens_;
 };

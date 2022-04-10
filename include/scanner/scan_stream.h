@@ -1,8 +1,8 @@
-#include "scanner/token.h"
+#include <istream>
 
-class TokenStream {
+class ScanStream {
 public:
-    TokenStream(std::istream& stream): stream_{stream} {}
+    ScanStream(std::istream& stream): stream_{stream} {}
     std::string& next();
 
 private:
@@ -11,7 +11,5 @@ private:
     std::string token_;
     bool read_{true};
 
-    bool is_parentheses(char c) {
-        return c == TOKEN_LPARENT || c == TOKEN_RPARENT;
-    }
+    bool is_parentheses(char c);
 };

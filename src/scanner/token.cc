@@ -45,3 +45,7 @@ Token::Token(std::string name): name_{name} {
 
     type_ = TOKEN_ID;
 }
+
+bool Token::isNum(char c) {
+    return c >= '0' && c <= '9';
+}

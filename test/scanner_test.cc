@@ -2,58 +2,58 @@
 
 #include "gtest/gtest.h"
 
-class SyntaxTest : public ::testing::Test {
+class ScannerTest : public ::testing::Test {
 protected:
-    std::stringstream iss_;
-    TokenStream s1_{iss_};
-    Syntax syntax_{iss_};
+    std::stringstream input_;
+    ScanStream ss_{input_};
+    Scanner scanner_{input_};
 };
 
-TEST_F(SyntaxTest, SimpleTokenStream) {
-    iss_.clear();
-    iss_ << "(+ 1 2)";
+TEST_F(ScannerTest, SimpleTokenStream) {
+    input_.clear();
+    input_ << "(+ 1 2)";
     
-    EXPECT_EQ(s1_.next(), "(");
-    EXPECT_EQ(s1_.next(), "+");
-    EXPECT_EQ(s1_.next(), "1");
-    EXPECT_EQ(s1_.next(), "2");
-    EXPECT_EQ(s1_.next(), ")");
-    EXPECT_EQ(s1_.next(), "");
+    EXPECT_EQ(ss_.next(), "(");
+    EXPECT_EQ(ss_.next(), "+");
+    EXPECT_EQ(ss_.next(), "1");
+    EXPECT_EQ(ss_.next(), "2");
+    EXPECT_EQ(ss_.next(), ")");
+    EXPECT_EQ(ss_.next(), "");
 
-    iss_.clear();
-    iss_ << "hello world";
-    EXPECT_EQ(s1_.next(), "hello");
-    EXPECT_EQ(s1_.next(), "world");
-    EXPECT_EQ(s1_.next(), "");    
+    input_.clear();
+    input_ << "hello world";
+    EXPECT_EQ(ss_.next(), "hello");
+    EXPECT_EQ(ss_.next(), "world");
+    EXPECT_EQ(ss_.next(), "");    
 }
 
-TEST_F(SyntaxTest, NestedTokenStream) {
-    iss_.clear();
-    iss_ << "(let ((val (+(* 1 2)3))) (* val 5))";
+TEST_F(ScannerTest, NestedTokenStream) {
+    input_.clear();
+    input_ << "(let ((val (+(* 1 2)3))) (* val 5))";
     
-    EXPECT_EQ(s1_.next(), "(");
-    EXPECT_EQ(s1_.next(), "let");
-    EXPECT_EQ(s1_.next(), "(");
-    EXPECT_EQ(s1_.next(), "(");
-    EXPECT_EQ(s1_.next(), "val");
-    EXPECT_EQ(s1_.next(), "(");
-    EXPECT_EQ(s1_.next(), "+");
-    EXPECT_EQ(s1_.next(), "(");
-    EXPECT_EQ(s1_.next(), "*");
-    EXPECT_EQ(s1_.next(), "1");
-    EXPECT_EQ(s1_.next(), "2");
-    EXPECT_EQ(s1_.next(), ")");
-    EXPECT_EQ(s1_.next(), "3");
-    EXPECT_EQ(s1_.next(), ")");
-    EXPECT_EQ(s1_.next(), ")");
-    EXPECT_EQ(s1_.next(), ")");
-    EXPECT_EQ(s1_.next(), "(");
-    EXPECT_EQ(s1_.next(), "*");
-    EXPECT_EQ(s1_.next(), "val");
-    EXPECT_EQ(s1_.next(), "5");
-    EXPECT_EQ(s1_.next(), ")");
-    EXPECT_EQ(s1_.next(), ")");
-    EXPECT_EQ(s1_.next(), "");   
+    EXPECT_EQ(ss_.next(), "(");
+    EXPECT_EQ(ss_.next(), "let");
+    EXPECT_EQ(ss_.next(), "(");
+    EXPECT_EQ(ss_.next(), "(");
+    EXPECT_EQ(ss_.next(), "val");
+    EXPECT_EQ(ss_.next(), "(");
+    EXPECT_EQ(ss_.next(), "+");
+    EXPECT_EQ(ss_.next(), "(");
+    EXPECT_EQ(ss_.next(), "*");
+    EXPECT_EQ(ss_.next(), "1");
+    EXPECT_EQ(ss_.next(), "2");
+    EXPECT_EQ(ss_.next(), ")");
+    EXPECT_EQ(ss_.next(), "3");
+    EXPECT_EQ(ss_.next(), ")");
+    EXPECT_EQ(ss_.next(), ")");
+    EXPECT_EQ(ss_.next(), ")");
+    EXPECT_EQ(ss_.next(), "(");
+    EXPECT_EQ(ss_.next(), "*");
+    EXPECT_EQ(ss_.next(), "val");
+    EXPECT_EQ(ss_.next(), "5");
+    EXPECT_EQ(ss_.next(), ")");
+    EXPECT_EQ(ss_.next(), ")");
+    EXPECT_EQ(ss_.next(), "");   
 }
 
 TEST(TokenTest, TokenType) {
@@ -69,23 +69,23 @@ TEST(TokenTest, TokenType) {
     ASSERT_EQ(Token("+").type(), TOKEN_ID);
 }
 
-TEST_F(SyntaxTest, SimpleSyntax) {
-    iss_.clear();
-    iss_ << "(define val 1)";
-    syntax_.read();
+TEST_F(ScannerTest, SimpleScanner) {
+    input_.clear();
+    input_ << "(define val 1)";
+    scanner_.read();
 
-    EXPECT_EQ(syntax_.tokens().size(), 5);
+    EXPECT_EQ(scanner_.tokens().size(), 5);
     
-    EXPECT_EQ(syntax_.tokens()[0].name(), "(");
-    EXPECT_EQ(syntax_.tokens()[0].type(), TOKEN_LPARENT);
-    EXPECT_EQ(syntax_.tokens()[1].name(), "define");
-    EXPECT_EQ(syntax_.tokens()[1].type(), TOKEN_DEFINE);
-    EXPECT_EQ(syntax_.tokens()[2].name(), "val");
-    EXPECT_EQ(syntax_.tokens()[2].type(), TOKEN_ID);
-    EXPECT_EQ(syntax_.tokens()[3].name(), "1");
-    EXPECT_EQ(syntax_.tokens()[3].type(), TOKEN_NUM);
-    EXPECT_EQ(syntax_.tokens()[4].name(), ")");
-    EXPECT_EQ(syntax_.tokens()[4].type(), TOKEN_RPARENT);
+    EXPECT_EQ(scanner_.tokens()[0].name(), "(");
+    EXPECT_EQ(scanner_.tokens()[0].type(), TOKEN_LPARENT);
+    EXPECT_EQ(scanner_.tokens()[1].name(), "define");
+    EXPECT_EQ(scanner_.tokens()[1].type(), TOKEN_DEFINE);
+    EXPECT_EQ(scanner_.tokens()[2].name(), "val");
+    EXPECT_EQ(scanner_.tokens()[2].type(), TOKEN_ID);
+    EXPECT_EQ(scanner_.tokens()[3].name(), "1");
+    EXPECT_EQ(scanner_.tokens()[3].type(), TOKEN_NUM);
+    EXPECT_EQ(scanner_.tokens()[4].name(), ")");
+    EXPECT_EQ(scanner_.tokens()[4].type(), TOKEN_RPARENT);
 }
 
 int main(int argc, char **argv) {

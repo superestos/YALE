@@ -1,7 +1,6 @@
 #pragma once
 
-#include <istream>
-#include <iostream>
+#include <string>
 
 typedef enum {
     TOKEN_ERR,
@@ -30,7 +29,5 @@ private:
     TokenType type_;
     std::string name_;
 
-    bool isNum(char c) {
-        return c >= '0' && c <= '9';
-    }
+    bool isNum(char c);
 };
