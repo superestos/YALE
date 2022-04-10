@@ -6,6 +6,7 @@ class SyntaxTest : public ::testing::Test {
 protected:
     std::stringstream iss_;
     TokenStream s1_{iss_};
+    Syntax syntax_{iss_};
 };
 
 TEST_F(SyntaxTest, SimpleTokenStream) {
@@ -66,6 +67,25 @@ TEST(TokenTest, TokenType) {
     ASSERT_EQ(Token("(").type(), TOKEN_LPARENT);
     ASSERT_EQ(Token(")").type(), TOKEN_RPARENT);
     ASSERT_EQ(Token("+").type(), TOKEN_ID);
+}
+
+TEST_F(SyntaxTest, SimpleSyntax) {
+    iss_.clear();
+    iss_ << "(define val 1)";
+    syntax_.read();
+
+    EXPECT_EQ(syntax_.tokens().size(), 5);
+    
+    EXPECT_EQ(syntax_.tokens()[0].name(), "(");
+    EXPECT_EQ(syntax_.tokens()[0].type(), TOKEN_LPARENT);
+    EXPECT_EQ(syntax_.tokens()[1].name(), "define");
+    EXPECT_EQ(syntax_.tokens()[1].type(), TOKEN_DEFINE);
+    EXPECT_EQ(syntax_.tokens()[2].name(), "val");
+    EXPECT_EQ(syntax_.tokens()[2].type(), TOKEN_ID);
+    EXPECT_EQ(syntax_.tokens()[3].name(), "1");
+    EXPECT_EQ(syntax_.tokens()[3].type(), TOKEN_NUM);
+    EXPECT_EQ(syntax_.tokens()[4].name(), ")");
+    EXPECT_EQ(syntax_.tokens()[4].type(), TOKEN_RPARENT);
 }
 
 int main(int argc, char **argv) {
