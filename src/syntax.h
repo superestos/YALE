@@ -4,29 +4,23 @@
 class TokenStream {
 public:
     TokenStream(std::istream& stream): stream_{stream} {}
+    
     std::string& next() {
         if (read_) {
             stream_ >> buffer_;
         }
-        read_ = true;
 
+        size_t cut = buffer_.size();
         for (size_t i = 0; i < buffer_.size(); i++) {
             if (is_parentheses(buffer_[i])) {
-                size_t cut = std::max(1UL, i);
-                read_ = buffer_.size() == 1;
-
-                if (!read_) {
-                    token_ = buffer_.substr(0, cut);
-                    buffer_ = buffer_.substr(cut);
-                }
-                
+                cut = std::max(1UL, i);
                 break;
             }
         }
 
-        if (read_) {
-            token_ = std::move(buffer_);
-        }
+        token_ = buffer_.substr(0, cut);
+        buffer_ = buffer_.substr(cut);
+        read_ = buffer_.empty();
         
         return token_;
     }
