@@ -1,4 +1,4 @@
-#include "syntax.h"
+#include "scanner/scanner.h"
 
 #include "gtest/gtest.h"
 

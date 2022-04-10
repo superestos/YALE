@@ -19,7 +19,7 @@ enable_testing()
 
 # add_executable(hello_test test/hello_test.cc)
 
-add_executable(syntax_test src/syntax.cc test/syntax_test.cc)
+add_executable(syntax_test src/scanner/scanner.cc src/scanner/scan_stream.cc src/scanner/token.cc test/syntax_test.cc)
 
 target_link_libraries(
 #  hello_test
