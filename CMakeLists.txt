@@ -19,15 +19,17 @@ enable_testing()
 
 # add_executable(hello_test test/hello_test.cc)
 
-add_executable(syntax_test src/scanner/scanner.cc src/scanner/scan_stream.cc src/scanner/token.cc test/syntax_test.cc)
+file(GLOB_RECURSE yale_src CONFIGURE_DEPENDS "./src/*.cc")
+
+add_executable(scanner_test ${yale_src} test/scanner_test.cc)
 
 target_link_libraries(
 #  hello_test
-  syntax_test
+  scanner_test
   gtest_main
 )
 
 include(GoogleTest)
 
 # gtest_discover_tests(hello_test)
-gtest_discover_tests(syntax_test)
+gtest_discover_tests(scanner_test)
