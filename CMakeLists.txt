@@ -14,22 +14,17 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 include_directories(include)
-
 enable_testing()
-
-# add_executable(hello_test test/hello_test.cc)
 
 file(GLOB_RECURSE yale_src CONFIGURE_DEPENDS "./src/*.cc")
 
+add_executable(hello_test test/hello_test.cc)
 add_executable(scanner_test ${yale_src} test/scanner_test.cc)
 
-target_link_libraries(
-#  hello_test
-  scanner_test
-  gtest_main
-)
+target_link_libraries(hello_test gtest_main)
+target_link_libraries(scanner_test gtest_main)
 
 include(GoogleTest)
 
 # gtest_discover_tests(hello_test)
-gtest_discover_tests(scanner_test)
+# gtest_discover_tests(scanner_test)
