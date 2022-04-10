@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(my_project)
+project(YetAnotherLispEvaluator)
 
 # GoogleTest requires at least C++11
 set(CMAKE_CXX_STANDARD 11)
@@ -13,11 +13,13 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+include_directories(include)
+
 enable_testing()
 
 # add_executable(hello_test test/hello_test.cc)
 
-add_executable(syntax_test test/syntax_test.cc)
+add_executable(syntax_test src/syntax.cc test/syntax_test.cc)
 
 target_link_libraries(
 #  hello_test

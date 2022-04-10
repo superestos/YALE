@@ -1,4 +1,4 @@
-#include "../src/syntax.h"
+#include "syntax.h"
 
 #include "gtest/gtest.h"
 
