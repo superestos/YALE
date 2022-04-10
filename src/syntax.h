@@ -4,19 +4,22 @@
 class TokenStream {
 public:
     TokenStream(std::istream& stream): stream_{stream} {}
-    std::string& newToken() {
+    std::string& next() {
         if (read_) {
             stream_ >> buffer_;
         }
         read_ = true;
 
         for (size_t i = 0; i < buffer_.size(); i++) {
-            if (buffer_[i] == '(' || buffer_[i] == ')') {
+            if (is_parentheses(buffer_[i])) {
                 size_t cut = std::max(1UL, i);
-                read_ = false;
+                read_ = buffer_.size() == 1;
 
-                token_ = buffer_.substr(0, cut);
-                buffer_ = buffer_.substr(cut);
+                if (!read_) {
+                    token_ = buffer_.substr(0, cut);
+                    buffer_ = buffer_.substr(cut);
+                }
+                
                 break;
             }
         }
@@ -34,6 +37,7 @@ private:
     std::string token_;
     bool read_{true};
 
-    const std::string left_parentheses_{"("};
-    const std::string right_parentheses_{")"};
+    bool is_parentheses(char c) {
+        return c == '(' || c == ')';
+    }
 };
