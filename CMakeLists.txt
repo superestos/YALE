@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(YetAnotherLispEvaluator)
 
-# GoogleTest requires at least C++11
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -20,9 +19,11 @@ file(GLOB_RECURSE yale_src CONFIGURE_DEPENDS "./src/*.cc")
 
 add_executable(hello_test test/hello_test.cc)
 add_executable(scanner_test ${yale_src} test/scanner_test.cc)
+add_executable(parser_test ${yale_src} test/parser_test.cc)
 
 target_link_libraries(hello_test gtest_main)
 target_link_libraries(scanner_test gtest_main)
+target_link_libraries(parser_test gtest_main)
 
 include(GoogleTest)
 
