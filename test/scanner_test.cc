@@ -57,6 +57,7 @@ TEST_F(ScannerTest, NestedTokenStream) {
 }
 
 TEST(TokenTest, TokenType) {
+    ASSERT_EQ(Token().type(), TOKEN_ERR);
     ASSERT_EQ(Token("").type(), TOKEN_ERR);
     ASSERT_EQ(Token("123").type(), TOKEN_NUM);
     ASSERT_EQ(Token("1ab").type(), TOKEN_ERR);

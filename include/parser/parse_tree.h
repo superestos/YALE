@@ -13,7 +13,7 @@ class ParseTreeNode {
 public:
     ParseTreeNode(Token token): token_{token} {}
 
-    ParseTreeNode(): token_{""} {}
+    ParseTreeNode(): token_{} {}
 
     bool isCompound();
     Token token(); 

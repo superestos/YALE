@@ -17,6 +17,8 @@ class Token {
 public:
     Token(std::string name);
 
+    Token(): Token("") {}
+
     TokenType type() {
         return type_;
     }
