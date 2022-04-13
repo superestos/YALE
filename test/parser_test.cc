@@ -1,6 +1,24 @@
-#include "parser/parse_tree.h"
+#include "parser/parser.h"
+#include "scanner/scanner.h"
 
 #include "gtest/gtest.h"
+
+class ParserTest : public ::testing::Test {
+protected:
+    std::stringstream input_;
+    Scanner scanner_{input_};
+    Parser parser_;
+};
+
+TEST_F(ParserTest, SimpleParser) {
+    EXPECT_EQ(parser_.isValid(), true);
+    EXPECT_EQ(parser_.tree().size(), 0);
+
+    parser_.analyze(Token("1"));
+
+    EXPECT_EQ(parser_.isValid(), true);
+    EXPECT_EQ(parser_.tree().size(), 1);
+}
 
 TEST(ParseTreeTest, ParseType) {
     ParseTreePointer elementTree = std::make_shared<ParseTreeNode>(Token("1"));
