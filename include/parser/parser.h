@@ -11,6 +11,12 @@ public:
 
     void analyze(Token token);
 
+    void analyze(std::vector<Token> tokens) {
+        for (auto token: tokens) {
+            analyze(token);
+        }
+    }
+
     std::vector<ParseTreePointer> tree() {
         return tree_->children();
     }
