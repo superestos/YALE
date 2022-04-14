@@ -17,6 +17,8 @@ class Expression {
 
 class Value {
 public:
+    Value(): type_{VALUE_ERR} {}
+
     Value(Num value): type_{VALUE_NUM}, num_{value} {}
 
     Value(Quote value): type_{VALUE_QUOTE}, quote_{value} {}
