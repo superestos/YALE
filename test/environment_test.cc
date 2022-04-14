@@ -4,8 +4,9 @@
 
 class EnvironmentTest : public ::testing::Test {
 protected:
-    EnvironmentPtr global_{std::make_shared<Environment>()};
-    EnvironmentPtr local_{global_};
+    EnvironmentManager manager_;
+    EnvironmentPtr global_{manager_.global()};
+    EnvironmentPtr local_{manager_.create(global_)};
 };
 
 TEST_F(EnvironmentTest, SimpleEnvironment) {
@@ -24,6 +25,7 @@ TEST_F(EnvironmentTest, EnclosingEnvironment) {
     ASSERT_EQ(local_->existed("x"), false);
 
     global_->define("x", Value(42));
+
     ASSERT_EQ(local_->existed("x"), true);
     ASSERT_EQ(local_->get("x").num(), 42);
 
@@ -31,8 +33,7 @@ TEST_F(EnvironmentTest, EnclosingEnvironment) {
     ASSERT_EQ(local_->existed("x"), true);
     ASSERT_EQ(local_->get("x").num(), 40);
 
-    
-    //local_->define("x", Value(42));
-    //ASSERT_EQ(local_->existed("x"), true);
-    //ASSERT_EQ(local_->get("x").num(), 42);
+    local_->define("x", Value(42));
+    ASSERT_EQ(local_->existed("x"), true);
+    ASSERT_EQ(local_->get("x").num(), 42);
 }

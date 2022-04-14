@@ -6,12 +6,12 @@
 class Environment;
 typedef std::shared_ptr<Environment> EnvironmentPtr;
 
+class EnvironmentManager;
+
 class Environment {
+friend class EnvironmentManager;
+
 public:
-    Environment() {}
-
-    Environment(EnvironmentPtr enclosing): enclosing_{enclosing} {}
-
     void define(const std::string &name, Value value) {
         assert(!local_existed(name));
         map_[name] = value;
@@ -40,6 +40,30 @@ private:
         return map_.count(name) > 0;
     }
 
+    Environment(EnvironmentPtr enclosing): enclosing_{enclosing} {}
+
+    Environment() {}
+
     std::map<std::string, Value> map_;
     EnvironmentPtr enclosing_;
+};
+
+class EnvironmentManager {
+public:
+    EnvironmentManager() {
+        Environment *env = new Environment();
+        global_ = std::shared_ptr<Environment>(env);
+    }
+
+    EnvironmentPtr global() {
+        return global_;
+    }
+
+    EnvironmentPtr create(EnvironmentPtr enclosing) {
+        Environment *env = new Environment(enclosing);
+        return std::shared_ptr<Environment>(env);
+    }
+
+private:
+    EnvironmentPtr global_;
 };
