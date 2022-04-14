@@ -11,7 +11,7 @@ public:
         read();
     }
 
-    std::vector<Token> tokens() const;
+    const std::vector<Token>& tokens();
     void read();
     void clear();
 

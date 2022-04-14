@@ -19,11 +19,11 @@ public:
 
     Token(): Token("") {}
 
-    TokenType type() {
+    TokenType type() const {
         return type_;
     }
 
-    std::string& name() {
+    const std::string& name() const {
         return name_;
     }
 

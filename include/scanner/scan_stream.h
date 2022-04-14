@@ -3,7 +3,7 @@
 class ScanStream {
 public:
     ScanStream(std::istream& stream): stream_{stream} {}
-    std::string& next();
+    const std::string& next();
 
 private:
     std::istream& stream_;

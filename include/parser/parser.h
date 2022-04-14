@@ -11,8 +11,8 @@ public:
 
     void analyze(Token token);
 
-    void analyze(std::vector<Token> tokens) {
-        for (auto token: tokens) {
+    void analyze(const std::vector<Token>& tokens) {
+        for (auto& token: tokens) {
             analyze(token);
         }
     }

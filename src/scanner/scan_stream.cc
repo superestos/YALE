@@ -1,6 +1,6 @@
 #include "scanner/scan_stream.h"
 
-std::string& ScanStream::next() {
+const std::string& ScanStream::next() {
     if (read_) {
         stream_ >> buffer_;
     }

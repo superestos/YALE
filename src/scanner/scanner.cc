@@ -1,6 +1,6 @@
 #include "scanner/scanner.h"
 
-std::vector<Token> Scanner::tokens() const {
+const std::vector<Token>& Scanner::tokens() {
     return tokens_;
 }
 
