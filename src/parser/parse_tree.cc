@@ -9,7 +9,12 @@ Token ParseTreeNode::token() {
     return token_;
 }
 
-std::vector<ParseTreePointer>& ParseTreeNode::children() {
+const std::vector<ParseTreePointer>& ParseTreeNode::children() {
     assert(isCompound());
     return children_;
+}
+
+void ParseTreeNode::emplace(ParseTreePointer node) {
+    assert(isCompound());
+    children_.emplace_back(node);
 }
