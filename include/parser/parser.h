@@ -22,10 +22,11 @@ public:
     }
 
     bool isValid() {
-        return stack_.size() == 1;
+        return stack_.size() == 1 && !error_;
     }
 
 private:
     ParseTreePointer tree_;
     std::stack<ParseTreePointer> stack_;
+    bool error_{false};
 };

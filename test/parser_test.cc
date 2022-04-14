@@ -70,6 +70,30 @@ TEST_F(ParserTest, NestedParent) {
     EXPECT_EQ(parser_.tree()[0]->children()[2]->isCompound(), true);
 }
 
+TEST_F(ParserTest, InvalidParentInput) {
+    Parser parser_;
+
+    input_.clear();
+    scanner_.clear();
+    input_ << "(+ (f x)) (g x))";
+    scanner_.read();
+    parser_.analyze(scanner_.tokens());
+
+    EXPECT_EQ(parser_.isValid(), false);
+}
+
+TEST_F(ParserTest, InvalidTokenInput) {
+    Parser parser_;
+
+    input_.clear();
+    scanner_.clear();
+    input_ << "1a";
+    scanner_.read();
+    parser_.analyze(scanner_.tokens());
+
+    EXPECT_EQ(parser_.isValid(), false);
+}
+
 TEST(ParseTreeTest, ParseType) {
     ParseTreePointer elementTree = std::make_shared<ParseTreeNode>(Token("1"));
     ParseTreePointer compoundTree = std::make_shared<ParseTreeNode>();
