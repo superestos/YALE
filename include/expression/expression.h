@@ -1,6 +1,8 @@
 #include <string>
 #include <cassert>
 
+#include "parser/parser.h"
+
 typedef enum {
     VALUE_ERR,
     VALUE_NUM,
@@ -11,9 +13,13 @@ typedef enum {
 typedef int Num;
 typedef std::string Quote;
 
+class Value;
+
 class Expression {
-    //virtual const Value& evaluate() = 0;
+    virtual const Value& eval() const = 0;
 };
+
+typedef std::shared_ptr<Expression> ExpressionPtr;
 
 class Value {
 public:
@@ -23,7 +29,7 @@ public:
 
     Value(Quote value): type_{VALUE_QUOTE}, quote_{value} {}
 
-    Value(Expression value): type_{VALUE_FUNCTION}, function_{value} {}
+    Value(ExpressionPtr value): type_{VALUE_FUNCTION}, function_{value} {}
 
     ValueType type() const {
         return type_;
@@ -39,7 +45,7 @@ public:
         return quote_;
     }
 
-    const Expression& function() const {
+    const ExpressionPtr function() const {
         assert(type() == VALUE_FUNCTION);
         return function_;
     }
@@ -48,10 +54,29 @@ private:
     ValueType type_;
     Num num_;
     Quote quote_;
-    Expression function_;
+    ExpressionPtr function_;
 };
 
+class ValueExpression {
+public:
+    ValueExpression(const ParseTreePointer parse_tree) {
+        if (!parse_tree->isCompound()) {
+            Token token = parse_tree->token();
+            if (token.type() == TOKEN_QUOTE) {
+                value_ = Value(token.name().substr(1));
+            } else if (token.type() == TOKEN_NUM) {
+                value_ = Value(std::stoi(token.name()));
+            }
+        }
+    }
 
+    const Value& eval() const {
+        return value_;
+    }
+
+private:
+    Value value_;
+};
 
 
 /*

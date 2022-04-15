@@ -2,7 +2,15 @@
 
 #include "gtest/gtest.h"
 
-TEST(valueTest, BasicValue) {
+TEST(ExpressionTest, ValueExpression) {
+    ParseTreePointer num = std::make_shared<ParseTreeNode>(Token("42"));
+    ParseTreePointer quote = std::make_shared<ParseTreeNode>(Token("'hi"));
+
+    EXPECT_EQ(ValueExpression(num).eval().num(), 42);
+    EXPECT_EQ(ValueExpression(quote).eval().quote(), "hi");
+}
+
+TEST(ValueTest, BasicValue) {
     Value n(42);
     Value q("hello world");
 
