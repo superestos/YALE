@@ -38,6 +38,17 @@ const Value& ValueExpression::eval(const EnvironmentPtr &env) const {
     return value_;
 }
 
+DefineExpression::DefineExpression(const ParseTreePointer parse_tree) {
+    assert(parse_tree->isCompound());
+    auto& args = parse_tree->children();
+    assert(args.size() == 3);
+    assert(args[0]->token().name() == "define");
+    assert(args[1]->token().type() == TOKEN_ID);
+
+    name_ = args[1]->token().name();
+    expr_ = std::shared_ptr<Expression>(new ValueExpression(args[2]));
+}
+
 const Value& DefineExpression::eval(const EnvironmentPtr &env) const {
     Value value = expr_->eval(env);
     env->define(name_, value);

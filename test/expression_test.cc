@@ -3,11 +3,16 @@
 #include "gtest/gtest.h"
 
 #include "environment/environment.h"
+#include "scanner/scanner.h"
 
 class ExpressionTest : public ::testing::Test {
 protected:
     EnvironmentManager manager_;
     EnvironmentPtr env_{manager_.global()};
+
+    std::stringstream input_;
+    Scanner scanner_{input_};
+    Parser parser_;
 };
 
 TEST_F(ExpressionTest, ValueExpression) {
@@ -18,7 +23,7 @@ TEST_F(ExpressionTest, ValueExpression) {
     EXPECT_EQ(ValueExpression(quote).eval(env_).quote(), "hi");
 }
 
-TEST_F(ExpressionTest, DefineExpression) {
+TEST_F(ExpressionTest, DefineExpression1) {
     ParseTreePointer num = std::make_shared<ParseTreeNode>(Token("42"));
     ExpressionPtr x = std::shared_ptr<Expression>(new ValueExpression(num));
 
@@ -27,6 +32,19 @@ TEST_F(ExpressionTest, DefineExpression) {
 
     EXPECT_EQ(value.type(), VALUE_VOID);
     EXPECT_EQ(env_->get("x").num(), 42);
+}
+
+TEST_F(ExpressionTest, DefineExpression2) {
+    input_.clear();
+    input_ << "(define val 42)";
+    scanner_.read();
+    parser_.analyze(scanner_.tokens());
+
+    DefineExpression def(parser_.tree()[0]);
+    Value value = def.eval(env_);
+
+    EXPECT_EQ(value.type(), VALUE_VOID);
+    EXPECT_EQ(env_->get("val").num(), 42);
 }
 
 TEST(ValueTest, BasicValue) {

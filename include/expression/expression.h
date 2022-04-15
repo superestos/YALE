@@ -62,6 +62,8 @@ private:
 
 class DefineExpression : public Expression {
 public:
+    DefineExpression(const ParseTreePointer parse_tree);
+
     DefineExpression(std::string name, ExpressionPtr expr):
         name_{name}, expr_{expr} {}
 
