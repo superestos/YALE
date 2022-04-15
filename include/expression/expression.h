@@ -39,24 +39,10 @@ public:
 
     Value(ExpressionPtr value): type_{VALUE_FUNCTION}, function_{value} {}
 
-    ValueType type() const {
-        return type_;
-    }
-
-    Num num() const {
-        assert(type() == VALUE_NUM);
-        return num_;
-    }
-
-    const Quote& quote() const {
-        assert(type() == VALUE_QUOTE);
-        return quote_;
-    }
-
-    const ExpressionPtr function() const {
-        assert(type() == VALUE_FUNCTION);
-        return function_;
-    }
+    ValueType type() const;
+    Num num() const;
+    const Quote& quote() const;
+    const ExpressionPtr function() const;
 
 private:
     ValueType type_;
@@ -67,20 +53,8 @@ private:
 
 class ValueExpression : public Expression {
 public:
-    ValueExpression(const ParseTreePointer parse_tree) {
-        if (!parse_tree->isCompound()) {
-            Token token = parse_tree->token();
-            if (token.type() == TOKEN_QUOTE) {
-                value_ = Value(token.name().substr(1));
-            } else if (token.type() == TOKEN_NUM) {
-                value_ = Value(std::stoi(token.name()));
-            }
-        }
-    }
-
-    const Value& eval(const EnvironmentPtr &env) const {
-        return value_;
-    }
+    ValueExpression(const ParseTreePointer parse_tree);
+    const Value& eval(const EnvironmentPtr &env) const;
 
 private:
     Value value_;
@@ -97,29 +71,3 @@ private:
     std::string name_;
     ExpressionPtr expr_;
 };
-
-/*
-class NumValue {
-public:
-    NumValue(Num value): value_{value} {}
-
-    Num operator() () {
-        return value_;
-    }
-
-private:
-    Num value_;
-};
-
-class QuoteValue {
-public:
-    QuoteValue(Quote value): value_{value} {}
-
-    const Quote& operator() () {
-        return value_;
-    }
-
-private:
-    Quote value_;
-};
-*/
