@@ -8,18 +8,19 @@
 #include "parser/parser.h"
 
 typedef enum {
-    VALUE_ERR,
+    VALUE_VOID,
     VALUE_NUM,
     VALUE_QUOTE,
     VALUE_FUNCTION,
 } ValueType;
 
+class Value;
+
 class Environment;
 typedef std::shared_ptr<Environment> EnvironmentPtr;
 
-class Value;
-
 class Expression {
+public:
     virtual const Value& eval(const EnvironmentPtr &env) const = 0;
 };
 
@@ -30,7 +31,7 @@ typedef std::string Quote;
 
 class Value {
 public:
-    Value(): type_{VALUE_ERR} {}
+    Value(): type_{VALUE_VOID} {}
 
     Value(Num value): type_{VALUE_NUM}, num_{value} {}
 
@@ -85,6 +86,17 @@ private:
     Value value_;
 };
 
+class DefineExpression : public Expression {
+public:
+    DefineExpression(std::string name, ExpressionPtr expr):
+        name_{name}, expr_{expr} {}
+
+    const Value& eval(const EnvironmentPtr &env) const;
+
+private:
+    std::string name_;
+    ExpressionPtr expr_;
+};
 
 /*
 class NumValue {

@@ -7,15 +7,26 @@
 class ExpressionTest : public ::testing::Test {
 protected:
     EnvironmentManager manager_;
-    EnvironmentPtr global_{manager_.global()};
+    EnvironmentPtr env_{manager_.global()};
 };
 
 TEST_F(ExpressionTest, ValueExpression) {
     ParseTreePointer num = std::make_shared<ParseTreeNode>(Token("42"));
     ParseTreePointer quote = std::make_shared<ParseTreeNode>(Token("'hi"));
 
-    EXPECT_EQ(ValueExpression(num).eval(global_).num(), 42);
-    EXPECT_EQ(ValueExpression(quote).eval(global_).quote(), "hi");
+    EXPECT_EQ(ValueExpression(num).eval(env_).num(), 42);
+    EXPECT_EQ(ValueExpression(quote).eval(env_).quote(), "hi");
+}
+
+TEST_F(ExpressionTest, DefineExpression) {
+    ParseTreePointer num = std::make_shared<ParseTreeNode>(Token("42"));
+    ExpressionPtr x = std::shared_ptr<Expression>(new ValueExpression(num));
+
+    DefineExpression def("x", x);
+    Value value = def.eval(env_);
+
+    EXPECT_EQ(value.type(), VALUE_VOID);
+    EXPECT_EQ(env_->get("x").num(), 42);
 }
 
 TEST(ValueTest, BasicValue) {
