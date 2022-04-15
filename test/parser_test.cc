@@ -7,11 +7,10 @@ class ParserTest : public ::testing::Test {
 protected:
     std::stringstream input_;
     Scanner scanner_{input_};
+    Parser parser_;
 };
 
 TEST_F(ParserTest, Simple) {
-    Parser parser_;
-
     EXPECT_EQ(parser_.isValid(), true);
     EXPECT_EQ(parser_.tree().size(), 0);
 
@@ -22,10 +21,7 @@ TEST_F(ParserTest, Simple) {
 }
 
 TEST_F(ParserTest, MutlipleCommand) {
-    Parser parser_;
-
     input_.clear();
-    scanner_.clear();
     input_ << "x 1";
     scanner_.read();
     parser_.analyze(scanner_.tokens());
@@ -37,10 +33,7 @@ TEST_F(ParserTest, MutlipleCommand) {
 }
 
 TEST_F(ParserTest, SingleParent) {
-    Parser parser_;
-
     input_.clear();
-    scanner_.clear();
     input_ << "(+ 1 2)";
     scanner_.read();
     parser_.analyze(scanner_.tokens());
@@ -54,10 +47,7 @@ TEST_F(ParserTest, SingleParent) {
 }
 
 TEST_F(ParserTest, NestedParent) {
-    Parser parser_;
-
     input_.clear();
-    scanner_.clear();
     input_ << "(+ (f x) (g x))";
     scanner_.read();
     parser_.analyze(scanner_.tokens());
@@ -71,10 +61,7 @@ TEST_F(ParserTest, NestedParent) {
 }
 
 TEST_F(ParserTest, InvalidParentInput) {
-    Parser parser_;
-
     input_.clear();
-    scanner_.clear();
     input_ << "(+ (f x)) (g x))";
     scanner_.read();
     parser_.analyze(scanner_.tokens());
@@ -83,10 +70,7 @@ TEST_F(ParserTest, InvalidParentInput) {
 }
 
 TEST_F(ParserTest, InvalidTokenInput) {
-    Parser parser_;
-
     input_.clear();
-    scanner_.clear();
     input_ << "1a";
     scanner_.read();
     parser_.analyze(scanner_.tokens());
