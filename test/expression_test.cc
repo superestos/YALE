@@ -2,12 +2,20 @@
 
 #include "gtest/gtest.h"
 
-TEST(ExpressionTest, ValueExpression) {
+#include "environment/environment.h"
+
+class ExpressionTest : public ::testing::Test {
+protected:
+    EnvironmentManager manager_;
+    EnvironmentPtr global_{manager_.global()};
+};
+
+TEST_F(ExpressionTest, ValueExpression) {
     ParseTreePointer num = std::make_shared<ParseTreeNode>(Token("42"));
     ParseTreePointer quote = std::make_shared<ParseTreeNode>(Token("'hi"));
 
-    EXPECT_EQ(ValueExpression(num).eval().num(), 42);
-    EXPECT_EQ(ValueExpression(quote).eval().quote(), "hi");
+    EXPECT_EQ(ValueExpression(num).eval(global_).num(), 42);
+    EXPECT_EQ(ValueExpression(quote).eval(global_).quote(), "hi");
 }
 
 TEST(ValueTest, BasicValue) {
