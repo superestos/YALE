@@ -73,3 +73,14 @@ private:
     std::string name_;
     ExpressionPtr expr_;
 };
+
+class VariableExpression : public Expression {
+public:
+    VariableExpression(std::string name):
+        name_{name} {}
+
+    const Value& eval(const EnvironmentPtr &env) const;
+
+private:
+    std::string name_;
+};

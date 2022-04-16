@@ -55,7 +55,7 @@ public:
         return global_;
     }
 
-    EnvironmentPtr create(EnvironmentPtr enclosing) {
+    static EnvironmentPtr create(EnvironmentPtr enclosing) {
         Environment *env = new Environment(enclosing);
         return std::shared_ptr<Environment>(env);
     }

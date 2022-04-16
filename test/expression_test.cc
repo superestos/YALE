@@ -47,6 +47,13 @@ TEST_F(ExpressionTest, DefineExpression2) {
     EXPECT_EQ(env_->get("val").num(), 42);
 }
 
+TEST_F(ExpressionTest, VariableExpression1) {
+    ExpressionPtr var = std::shared_ptr<Expression>(new VariableExpression("x"));
+
+    env_->define("x", 314);
+    EXPECT_EQ(var->eval(env_).num(), 314);
+}
+
 TEST(ValueTest, BasicValue) {
     Value n(42);
     Value q("hello world");

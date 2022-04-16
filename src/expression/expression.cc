@@ -54,3 +54,7 @@ const Value& DefineExpression::eval(const EnvironmentPtr &env) const {
     env->define(name_, value);
     return void_value;
 }
+
+const Value& VariableExpression::eval(const EnvironmentPtr &env) const {
+    return env->get(name_);
+}
