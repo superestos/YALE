@@ -33,7 +33,7 @@ public:
             new_env->define(names_[i], args[i]);
         }
 
-        expr_->eval(new_env);
+        return expr_->eval(new_env);
     }
 
 private:

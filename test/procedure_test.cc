@@ -17,8 +17,19 @@ protected:
 };
 
 TEST_F(ProcedureTest, Add) {
-    AddProcedure add = AddProcedure();
+    AddProcedure add;
     std::vector<Value> args = {2, 4};
 
     EXPECT_EQ(add.call(env_, args).num(), 6);
+}
+
+TEST_F(ProcedureTest, SelfDefinedIdentity) {
+    ExpressionPtr expr = std::shared_ptr<Expression>(new VariableExpression("x"));
+    SelfDefinedProcedure identity(expr, {"x"});
+
+    std::vector<Value> num_args = {42};
+    EXPECT_EQ(identity.call(env_, num_args).num(), 42);
+
+    std::vector<Value> quote_args = {Value("hi")};
+    EXPECT_EQ(identity.call(env_, quote_args).quote(), "hi");
 }
