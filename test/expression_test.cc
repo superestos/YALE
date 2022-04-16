@@ -4,6 +4,7 @@
 
 #include "environment/environment.h"
 #include "scanner/scanner.h"
+#include "expression/procedure.h"
 
 class ExpressionTest : public ::testing::Test {
 protected:
@@ -21,6 +22,9 @@ TEST_F(ExpressionTest, ValueExpression) {
 
     EXPECT_EQ(ValueExpression(num).eval(env_).num(), 42);
     EXPECT_EQ(ValueExpression(quote).eval(env_).quote(), "hi");
+
+    EXPECT_EQ(ValueExpression(88).eval(env_).num(), 88);
+    EXPECT_EQ(ValueExpression(Value("lisp")).eval(env_).quote(), "lisp");
 }
 
 TEST_F(ExpressionTest, DefineExpression1) {
@@ -52,6 +56,16 @@ TEST_F(ExpressionTest, VariableExpression1) {
 
     env_->define("x", 314);
     EXPECT_EQ(var->eval(env_).num(), 314);
+}
+
+TEST_F(ExpressionTest, ApplyExpression1) {
+    ExpressionPtr x = std::shared_ptr<Expression>(new VariableExpression("x"));
+    ProcedurePtr id = std::shared_ptr<Procedure>(new SelfDefinedProcedure(x, {"x"}));
+
+    ExpressionPtr val = std::shared_ptr<Expression>(new ValueExpression(365));
+    ExpressionPtr apply = std::shared_ptr<Expression>(new ApplyExpression(id, {val}));
+
+    EXPECT_EQ(apply->eval(env_).num(), 365);
 }
 
 TEST(ValueTest, BasicValue) {

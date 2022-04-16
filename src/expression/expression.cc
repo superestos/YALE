@@ -1,8 +1,7 @@
 #include "expression/expression.h"
 
+#include "expression/procedure.h"
 #include "environment/environment.h"
-
-Value void_value;
 
 ValueType Value::type() const {
     return type_;
@@ -34,7 +33,7 @@ ValueExpression::ValueExpression(const ParseTreePointer parse_tree) {
     }
 }
 
-const Value& ValueExpression::eval(const EnvironmentPtr &env) const {
+Value ValueExpression::eval(const EnvironmentPtr &env) const {
     return value_;
 }
 
@@ -49,12 +48,21 @@ DefineExpression::DefineExpression(const ParseTreePointer parse_tree) {
     expr_ = std::shared_ptr<Expression>(new ValueExpression(args[2]));
 }
 
-const Value& DefineExpression::eval(const EnvironmentPtr &env) const {
+Value DefineExpression::eval(const EnvironmentPtr &env) const {
     Value value = expr_->eval(env);
     env->define(name_, value);
-    return void_value;
+    return Value();
 }
 
-const Value& VariableExpression::eval(const EnvironmentPtr &env) const {
+Value VariableExpression::eval(const EnvironmentPtr &env) const {
     return env->get(name_);
+}
+
+Value ApplyExpression::eval(const EnvironmentPtr &env) const {
+    std::vector<Value> values;
+    for (auto& arg: args_) {
+        values.emplace_back(arg->eval(env));
+    }
+
+    return procedure_->call(env, values);
 }
