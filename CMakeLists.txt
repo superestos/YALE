@@ -22,12 +22,14 @@ add_executable(scanner_test ${yale_src} test/scanner_test.cc)
 add_executable(parser_test ${yale_src} test/parser_test.cc)
 add_executable(expression_test ${yale_src} test/expression_test.cc)
 add_executable(environment_test ${yale_src} test/environment_test.cc)
+add_executable(procedure_test ${yale_src} test/procedure_test.cc)
 
 target_link_libraries(hello_test gtest_main)
 target_link_libraries(scanner_test gtest_main)
 target_link_libraries(parser_test gtest_main)
 target_link_libraries(expression_test gtest_main)
 target_link_libraries(environment_test gtest_main)
+target_link_libraries(procedure_test gtest_main)
 
 include(GoogleTest)
 
