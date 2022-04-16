@@ -11,13 +11,16 @@ typedef enum {
     VALUE_VOID,
     VALUE_NUM,
     VALUE_QUOTE,
-    VALUE_FUNCTION,
+    VALUE_PROCEDURE,
 } ValueType;
 
 class Value;
 
 class Environment;
 typedef std::shared_ptr<Environment> EnvironmentPtr;
+
+class Procedure;
+typedef std::shared_ptr<Procedure> ProcedurePtr;
 
 class Expression {
 public:
@@ -37,18 +40,18 @@ public:
 
     Value(Quote value): type_{VALUE_QUOTE}, quote_{value} {}
 
-    Value(ExpressionPtr value): type_{VALUE_FUNCTION}, function_{value} {}
+    Value(ProcedurePtr value): type_{VALUE_PROCEDURE}, procedure_{value} {}
 
     ValueType type() const;
     Num num() const;
     const Quote& quote() const;
-    const ExpressionPtr function() const;
+    const ProcedurePtr procedure() const;
 
 private:
     ValueType type_;
     Num num_;
     Quote quote_;
-    ExpressionPtr function_;
+    ProcedurePtr procedure_;
 };
 
 class ValueExpression : public Expression {

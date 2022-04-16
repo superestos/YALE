@@ -18,9 +18,9 @@ const Quote& Value::quote() const {
     return quote_;
 }
 
-const ExpressionPtr Value::function() const {
-    assert(type() == VALUE_FUNCTION);
-    return function_;
+const ProcedurePtr Value::procedure() const {
+    assert(type() == VALUE_PROCEDURE);
+    return procedure_;
 }
 
 ValueExpression::ValueExpression(const ParseTreePointer parse_tree) {
