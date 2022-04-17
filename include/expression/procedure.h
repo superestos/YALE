@@ -15,6 +15,16 @@ public:
     Value call(const EnvironmentPtr &env, const std::vector<Value>& args) const;
 };
 
+class EqualProcedure : public Procedure {
+public:
+    Value call(const EnvironmentPtr &env, const std::vector<Value>& args) const;
+};
+
+class IfProcedure : public Procedure {
+public:
+    Value call(const EnvironmentPtr &env, const std::vector<Value>& args) const;
+};
+
 class SelfDefinedProcedure : public Procedure {
 public:
     SelfDefinedProcedure(ExpressionPtr expr, const std::vector<std::string>& names):

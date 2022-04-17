@@ -23,6 +23,19 @@ TEST_F(ProcedureTest, Add) {
     EXPECT_EQ(add.call(env_, args).num(), 6);
 }
 
+TEST_F(ProcedureTest, Condition) {
+    EqualProcedure equal;
+    IfProcedure cond;
+
+    EXPECT_EQ(equal.call(env_, {2, 2}).num(), 1);
+    EXPECT_EQ(equal.call(env_, {3, 2}).num(), 0);
+    EXPECT_EQ(equal.call(env_, {Value("b"), Value("b")}).num(), 1);
+    EXPECT_EQ(equal.call(env_, {Value("yes"), Value("no")}).num(), 0);
+
+    EXPECT_EQ(cond.call(env_, {1, 2, 3}).num(), 2);
+    EXPECT_EQ(cond.call(env_, {0, 2, 3}).num(), 3);
+}
+
 TEST_F(ProcedureTest, SelfDefinedIdentity) {
     ExpressionPtr expr = std::shared_ptr<Expression>(new VariableExpression("x"));
     SelfDefinedProcedure identity(expr, {"x"});
