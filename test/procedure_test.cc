@@ -33,3 +33,15 @@ TEST_F(ProcedureTest, SelfDefinedIdentity) {
     std::vector<Value> quote_args = {Value("hi")};
     EXPECT_EQ(identity.call(env_, quote_args).quote(), "hi");
 }
+
+TEST_F(ProcedureTest, SelfDefinedIncrease) {
+    ExpressionPtr x = std::shared_ptr<Expression>(new VariableExpression("x"));
+    ExpressionPtr one = std::shared_ptr<Expression>(new ValueExpression(Value(1)));
+    ProcedurePtr add = std::shared_ptr<Procedure>(new AddProcedure());
+    ExpressionPtr inc_expr = std::shared_ptr<Expression>(new ApplyExpression(add, {x, one}));
+
+    SelfDefinedProcedure inc_func(inc_expr, {"x"});
+
+    std::vector<Value> num_args = {42};
+    EXPECT_EQ(inc_func.call(env_, num_args).num(), 43);
+}
