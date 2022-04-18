@@ -20,6 +20,11 @@ public:
     Value call(const EnvironmentPtr &env, const std::vector<Value>& args) const;
 };
 
+class SmallProcedure : public Procedure {
+public:
+    Value call(const EnvironmentPtr &env, const std::vector<Value>& args) const;
+};
+
 class IfProcedure : public Procedure {
 public:
     Value call(const EnvironmentPtr &env, const std::vector<Value>& args) const;

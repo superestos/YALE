@@ -34,6 +34,19 @@ Value EqualProcedure::call(const EnvironmentPtr &env, const std::vector<Value>& 
     assert(false);
 }
 
+Value SmallProcedure::call(const EnvironmentPtr &env, const std::vector<Value>& args) const {
+    assert(args.size() == 2);
+    assert(args[0].type() == VALUE_NUM && args[1].type() == VALUE_NUM);
+
+    if (args[0].num() < args[1].num()) {
+        return Value(1);
+    } else {
+        return Value(0);
+    }
+
+    assert(false);
+}
+
 Value IfProcedure::call(const EnvironmentPtr &env, const std::vector<Value>& args) const {
     assert(args.size() == 3);
     assert(args[0].type() == VALUE_NUM);
