@@ -58,3 +58,20 @@ TEST_F(ProcedureTest, SelfDefinedIncrease) {
     std::vector<Value> num_args = {42};
     EXPECT_EQ(inc_func.call(env_, num_args).num(), 43);
 }
+
+/*
+TEST_F(ProcedureTest, SelfDefinedFib) {
+    ExpressionPtr x = std::shared_ptr<Expression>(new VariableExpression("x"));
+    ExpressionPtr minus_one = std::shared_ptr<Expression>(new ValueExpression(Value(-1)));
+    ExpressionPtr minus_two = std::shared_ptr<Expression>(new ValueExpression(Value(-2)));
+
+    ProcedurePtr add = std::shared_ptr<Procedure>(new AddProcedure());
+    ExpressionPtr minus_one_expr = std::shared_ptr<Expression>(new ApplyExpression(add, {x, minus_one}));
+    ExpressionPtr minus_two_expr = std::shared_ptr<Expression>(new ApplyExpression(add, {x, minus_two}));
+
+    SelfDefinedProcedure inc_func(inc_expr, {"x"});
+
+    std::vector<Value> num_args = {42};
+    EXPECT_EQ(inc_func.call(env_, num_args).num(), 43);
+}
+*/
