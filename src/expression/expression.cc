@@ -66,3 +66,12 @@ Value ApplyExpression::eval(const EnvironmentPtr &env) const {
 
     return procedure_->call(env, values);
 }
+
+Value DynamicApplyExpression::eval(const EnvironmentPtr &env) const {
+    std::vector<Value> values;
+    for (auto& arg: args_) {
+        values.emplace_back(arg->eval(env));
+    }
+
+    return env->get(name_).procedure()->call(env, values);
+}

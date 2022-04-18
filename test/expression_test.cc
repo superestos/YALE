@@ -68,6 +68,17 @@ TEST_F(ExpressionTest, ApplyExpression1) {
     EXPECT_EQ(apply->eval(env_).num(), 365);
 }
 
+TEST_F(ExpressionTest, DynamicApplyExpression1) {
+    env_->define("+", Value(std::shared_ptr<Procedure>(new AddProcedure())));
+
+    ExpressionPtr num1 = std::shared_ptr<Expression>(new ValueExpression(Value(8)));
+    ExpressionPtr num2 = std::shared_ptr<Expression>(new ValueExpression(Value(1)));
+    
+    ExpressionPtr expr = std::shared_ptr<Expression>(new DynamicApplyExpression("+", {num1, num2}));
+
+    EXPECT_EQ(expr->eval(env_).num(), 9);
+}
+
 TEST(ValueTest, BasicValue) {
     Value n(42);
     Value q("hello world");

@@ -101,3 +101,15 @@ private:
     ProcedurePtr procedure_;
     std::vector<ExpressionPtr> args_;
 };
+
+class DynamicApplyExpression : public Expression {
+public:
+    DynamicApplyExpression(const std::string &name, const std::vector<ExpressionPtr>& args):
+        name_{name}, args_{args} {}
+
+    Value eval(const EnvironmentPtr &env) const;
+
+private:
+    std::string name_;
+    std::vector<ExpressionPtr> args_;
+};
