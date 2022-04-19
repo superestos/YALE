@@ -2,6 +2,15 @@
 
 #include <cassert>
 
+template <typename T>
+ProcedurePtr Procedure::create() {
+    return std::shared_ptr<Procedure>(new T());
+}
+
+ProcedurePtr SelfDefinedProcedure::create(ExpressionPtr expr, const std::vector<std::string>& names) {
+    return std::shared_ptr<Procedure>(new SelfDefinedProcedure(expr, names));
+}
+
 std::pair<Value, Value> BinaryOperator::eval_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
     assert(args.size() == 2);
     std::pair<Value, Value> pair = {args[0]->eval(env), args[1]->eval(env)};

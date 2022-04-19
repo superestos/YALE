@@ -8,6 +8,9 @@
 class Procedure {
 public:
     virtual Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const = 0;
+
+    template <typename T>
+    static ProcedurePtr create();
 };
 
 class BinaryOperator : public Procedure {
@@ -43,6 +46,8 @@ public:
         expr_{expr}, names_{names} {}
 
     Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
+
+    static ProcedurePtr create(ExpressionPtr expr, const std::vector<std::string>& names);
 
 private:
     ExpressionPtr expr_;
