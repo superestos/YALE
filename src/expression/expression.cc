@@ -59,19 +59,9 @@ Value VariableExpression::eval(const EnvironmentPtr &env) const {
 }
 
 Value ApplyExpression::eval(const EnvironmentPtr &env) const {
-    std::vector<Value> values;
-    for (auto& arg: args_) {
-        values.emplace_back(arg->eval(env));
-    }
-
-    return procedure_->call(env, values);
+    return procedure_->call(env, args_);
 }
 
 Value DynamicApplyExpression::eval(const EnvironmentPtr &env) const {
-    std::vector<Value> values;
-    for (auto& arg: args_) {
-        values.emplace_back(arg->eval(env));
-    }
-
-    return env->get(name_).procedure()->call(env, values);
+    return env->get(name_).procedure()->call(env, args_);
 }

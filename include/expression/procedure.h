@@ -7,27 +7,27 @@
 
 class Procedure {
 public:
-    virtual Value call(const EnvironmentPtr &env, const std::vector<Value>& args) const = 0;
+    virtual Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const = 0;
 };
 
 class AddProcedure : public Procedure {
 public:
-    Value call(const EnvironmentPtr &env, const std::vector<Value>& args) const;
+    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 };
 
 class EqualProcedure : public Procedure {
 public:
-    Value call(const EnvironmentPtr &env, const std::vector<Value>& args) const;
+    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 };
 
 class SmallProcedure : public Procedure {
 public:
-    Value call(const EnvironmentPtr &env, const std::vector<Value>& args) const;
+    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 };
 
 class IfProcedure : public Procedure {
 public:
-    Value call(const EnvironmentPtr &env, const std::vector<Value>& args) const;
+    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 };
 
 class SelfDefinedProcedure : public Procedure {
@@ -35,7 +35,7 @@ public:
     SelfDefinedProcedure(ExpressionPtr expr, const std::vector<std::string>& names):
         expr_{expr}, names_{names} {}
 
-    Value call(const EnvironmentPtr &env, const std::vector<Value>& args) const;
+    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 
 private:
     ExpressionPtr expr_;

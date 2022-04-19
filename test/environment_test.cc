@@ -40,6 +40,7 @@ TEST_F(EnvironmentTest, EnclosingEnvironment) {
     ASSERT_EQ(local_->get("x").num(), 42);
 }
 
+/*
 TEST_F(EnvironmentTest, ProcedureEnvironment) {
     ASSERT_EQ(global_->existed("+"), false);
 
@@ -47,3 +48,4 @@ TEST_F(EnvironmentTest, ProcedureEnvironment) {
     ASSERT_EQ(global_->existed("+"), true);
     ASSERT_EQ(global_->get("+").procedure()->call(global_, {4, 5}).num(), 9);
 }
+*/

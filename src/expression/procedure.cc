@@ -2,29 +2,29 @@
 
 #include <cassert>
 
-Value AddProcedure::call(const EnvironmentPtr &env, const std::vector<Value>& args) const {
+Value AddProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
     Num sum = 0;
-    for (const Value& arg: args) {
-        sum += arg.num();
+    for (auto& arg: args) {
+        sum += arg->eval(env).num();
     }
 
     return Value(sum);
 }
 
-Value EqualProcedure::call(const EnvironmentPtr &env, const std::vector<Value>& args) const {
+Value EqualProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
     assert(args.size() == 2);
-    if (args[0].type() == VALUE_NUM) {
-        assert(args[1].type() == VALUE_NUM);
+    Value left = args[0]->eval(env);
+    Value right = args[1]->eval(env);
+    assert(left.type() == right.type());
 
-        if (args[0].num() == args[1].num()) {
+    if (left.type() == VALUE_NUM) {
+        if (left.num() == right.num()) {
             return Value(1);
         } else {
             return Value(0);
         }
-    } else if (args[0].type() == VALUE_QUOTE) {
-        assert(args[1].type() == VALUE_QUOTE);
-
-        if (args[0].quote() == args[1].quote()) {
+    } else if (left.type() == VALUE_QUOTE) {
+        if (left.quote() == right.quote()) {
             return Value(1);
         } else {
             return Value(0);
@@ -34,11 +34,13 @@ Value EqualProcedure::call(const EnvironmentPtr &env, const std::vector<Value>& 
     assert(false);
 }
 
-Value SmallProcedure::call(const EnvironmentPtr &env, const std::vector<Value>& args) const {
+Value SmallProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
     assert(args.size() == 2);
-    assert(args[0].type() == VALUE_NUM && args[1].type() == VALUE_NUM);
+    Value left = args[0]->eval(env);
+    Value right = args[1]->eval(env);
+    assert(left.type() == right.type());
 
-    if (args[0].num() < args[1].num()) {
+    if (left.num() < right.num()) {
         return Value(1);
     } else {
         return Value(0);
@@ -47,19 +49,20 @@ Value SmallProcedure::call(const EnvironmentPtr &env, const std::vector<Value>& 
     assert(false);
 }
 
-Value IfProcedure::call(const EnvironmentPtr &env, const std::vector<Value>& args) const {
+Value IfProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
     assert(args.size() == 3);
-    assert(args[0].type() == VALUE_NUM);
+    Value cond = args[0]->eval(env);
+    assert(cond.type() == VALUE_NUM);
 
-    return args[0].num() != 0? args[1]: args[2];
+    return cond.num() != 0? args[1]->eval(env): args[2]->eval(env);
 }
 
-Value SelfDefinedProcedure::call(const EnvironmentPtr &env, const std::vector<Value>& args) const {
+Value SelfDefinedProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
     assert(args.size() == names_.size());
     EnvironmentPtr new_env = EnvironmentManager::create(env);
 
     for (size_t i = 0; i < names_.size(); i++) {
-        new_env->define(names_[i], args[i]);
+        new_env->define(names_[i], args[i]->eval(env));
     }
 
     return expr_->eval(new_env);
