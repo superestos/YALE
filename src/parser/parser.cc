@@ -3,7 +3,7 @@
 void Parser::analyze(Token token) {
     if (token.type() == TOKEN_LPARENT) {
         auto node = std::make_shared<ParseTreeNode>();
-        stack_.top()->emplace(node);
+        insert(node);
         stack_.push(node);
 
     } else if (token.type() == TOKEN_RPARENT) {
@@ -18,6 +18,14 @@ void Parser::analyze(Token token) {
         
     } else {
         auto node = std::make_shared<ParseTreeNode>(token);
-        stack_.top()->emplace(node);
+        insert(node);
+    }
+}
+
+void Parser::insert(ParseTreePointer ptr) {
+    if (stack_.empty()) {
+        trees_.emplace_back(ptr);
+    } else {
+        stack_.top()->emplace(ptr);
     }
 }

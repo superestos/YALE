@@ -4,10 +4,12 @@
 
 class Parser {
 public:
+    /*
     Parser() {
         tree_ = std::make_shared<ParseTreeNode>();
         stack_.push(tree_);
     }
+    */
 
     void analyze(Token token);
 
@@ -18,15 +20,17 @@ public:
     }
 
     std::vector<ParseTreePointer> tree() {
-        return tree_->children();
+        return trees_;
     }
 
     bool isValid() {
-        return stack_.size() == 1 && !error_;
+        return stack_.empty() && !error_;
     }
 
 private:
-    ParseTreePointer tree_;
+    std::vector<ParseTreePointer> trees_;
     std::stack<ParseTreePointer> stack_;
     bool error_{false};
+
+    void insert(ParseTreePointer ptr);
 };
