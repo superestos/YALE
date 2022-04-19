@@ -70,6 +70,32 @@ TEST_F(ParserTest, NestedParent) {
     EXPECT_EQ(tree->children()[2]->children()[0]->token().name(), "g");
 }
 
+TEST_F(ParserTest, PartialInput) {
+    input_.clear();
+    input_ << "(+ 1";
+    scanner_.read();
+    parser_.analyze(scanner_.tokens());
+
+    EXPECT_EQ(parser_.valid(), false);
+    EXPECT_EQ(parser_.has_next(), false);
+    
+    input_.clear();
+    input_ << "2 )";
+    scanner_.clear();
+    scanner_.read();
+    parser_.analyze(scanner_.tokens());
+
+    EXPECT_EQ(parser_.valid(), true);
+    EXPECT_EQ(parser_.has_next(), true);
+    auto tree = parser_.next();
+    EXPECT_EQ(parser_.has_next(), false);
+
+    EXPECT_EQ(tree->children().size(), 3);
+    EXPECT_EQ(tree->children()[0]->token().name(), "+");
+    EXPECT_EQ(tree->children()[1]->token().name(), "1");
+    EXPECT_EQ(tree->children()[2]->token().name(), "2");
+}
+
 TEST_F(ParserTest, InvalidParentInput) {
     input_.clear();
     input_ << "(+ (f x)) (g x))";
