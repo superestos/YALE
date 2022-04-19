@@ -19,8 +19,14 @@ public:
         }
     }
 
-    std::vector<ParseTreePointer> tree() {
-        return trees_;
+    ParseTreePointer next() {
+        ParseTreePointer ptr = trees_.front();
+        trees_.pop_front();
+        return ptr;
+    }
+
+    bool has_next() {
+        return !trees_.empty();
     }
 
     bool isValid() {
@@ -28,7 +34,7 @@ public:
     }
 
 private:
-    std::vector<ParseTreePointer> trees_;
+    std::deque<ParseTreePointer> trees_;
     std::stack<ParseTreePointer> stack_;
     bool error_{false};
 

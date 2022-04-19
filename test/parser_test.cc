@@ -12,12 +12,13 @@ protected:
 
 TEST_F(ParserTest, Simple) {
     EXPECT_EQ(parser_.isValid(), true);
-    EXPECT_EQ(parser_.tree().size(), 0);
+    //EXPECT_EQ(parser_.tree().size(), 0);
 
     parser_.analyze(Token("1"));
 
     EXPECT_EQ(parser_.isValid(), true);
-    EXPECT_EQ(parser_.tree().size(), 1);
+    //EXPECT_EQ(parser_.tree().size(), 1);
+    EXPECT_EQ(parser_.has_next(), true);
 }
 
 TEST_F(ParserTest, MutlipleCommand) {
@@ -27,10 +28,19 @@ TEST_F(ParserTest, MutlipleCommand) {
     parser_.analyze(scanner_.tokens());
 
     EXPECT_EQ(parser_.isValid(), true);
+    /*
     EXPECT_EQ(parser_.tree().size(), 2);
     EXPECT_EQ(parser_.tree()[0]->token().name(), "x");
     EXPECT_EQ(parser_.tree()[1]->token().name(), "1");
+    */
+
+    EXPECT_EQ(parser_.has_next(), true);
+    EXPECT_EQ(parser_.next()->token().name(), "x");
+    EXPECT_EQ(parser_.has_next(), true);
+    EXPECT_EQ(parser_.next()->token().name(), "1");
+    EXPECT_EQ(parser_.has_next(), false);
 }
+
 
 TEST_F(ParserTest, SingleParent) {
     input_.clear();
@@ -39,11 +49,14 @@ TEST_F(ParserTest, SingleParent) {
     parser_.analyze(scanner_.tokens());
 
     EXPECT_EQ(parser_.isValid(), true);
-    EXPECT_EQ(parser_.tree().size(), 1);
-    EXPECT_EQ(parser_.tree()[0]->children().size(), 3);
-    EXPECT_EQ(parser_.tree()[0]->children()[0]->token().name(), "+");
-    EXPECT_EQ(parser_.tree()[0]->children()[1]->token().name(), "1");
-    EXPECT_EQ(parser_.tree()[0]->children()[2]->token().name(), "2");
+    EXPECT_EQ(parser_.has_next(), true);
+    auto tree = parser_.next();
+    EXPECT_EQ(parser_.has_next(), false);
+
+    EXPECT_EQ(tree->children().size(), 3);
+    EXPECT_EQ(tree->children()[0]->token().name(), "+");
+    EXPECT_EQ(tree->children()[1]->token().name(), "1");
+    EXPECT_EQ(tree->children()[2]->token().name(), "2");
 }
 
 TEST_F(ParserTest, NestedParent) {
@@ -53,11 +66,15 @@ TEST_F(ParserTest, NestedParent) {
     parser_.analyze(scanner_.tokens());
 
     EXPECT_EQ(parser_.isValid(), true);
-    EXPECT_EQ(parser_.tree().size(), 1);
-    EXPECT_EQ(parser_.tree()[0]->children().size(), 3);
-    EXPECT_EQ(parser_.tree()[0]->children()[0]->token().name(), "+");
-    EXPECT_EQ(parser_.tree()[0]->children()[1]->isCompound(), true);
-    EXPECT_EQ(parser_.tree()[0]->children()[2]->isCompound(), true);
+    EXPECT_EQ(parser_.has_next(), true);
+    auto tree = parser_.next();
+    EXPECT_EQ(parser_.has_next(), false);
+
+    EXPECT_EQ(tree->children().size(), 3);
+    EXPECT_EQ(tree->children()[0]->token().name(), "+");
+    EXPECT_EQ(tree->children()[1]->isCompound(), true);
+    EXPECT_EQ(tree->children()[2]->isCompound(), true);
+    EXPECT_EQ(tree->children()[2]->children()[0]->token().name(), "g");
 }
 
 TEST_F(ParserTest, InvalidParentInput) {

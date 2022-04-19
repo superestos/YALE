@@ -44,7 +44,7 @@ TEST_F(ExpressionTest, DefineExpression2) {
     scanner_.read();
     parser_.analyze(scanner_.tokens());
 
-    DefineExpression def(parser_.tree()[0]);
+    DefineExpression def(parser_.next());
     Value value = def.eval(env_);
 
     EXPECT_EQ(value.type(), VALUE_VOID);
