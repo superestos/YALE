@@ -115,13 +115,13 @@ TEST_F(ParserTest, InvalidTokenInput) {
 }
 
 TEST(ParseTreeTest, ParseType) {
-    ParseTreePointer elementTree = std::make_shared<ParseTreeNode>(Token("1"));
-    ParseTreePointer compoundTree = std::make_shared<ParseTreeNode>();
+    ParseTreePointer elementTree = ParseTreeNode::create(Token("1"));
+    ParseTreePointer compoundTree = ParseTreeNode::create();
     
-    compoundTree->emplace(std::make_shared<ParseTreeNode>(Token("(")));
-    compoundTree->emplace(std::make_shared<ParseTreeNode>(Token("f")));
-    compoundTree->emplace(std::make_shared<ParseTreeNode>(Token("x")));
-    compoundTree->emplace(std::make_shared<ParseTreeNode>(Token(")")));
+    compoundTree->emplace(ParseTreeNode::create(Token("(")));
+    compoundTree->emplace(ParseTreeNode::create(Token("f")));
+    compoundTree->emplace(ParseTreeNode::create(Token("x")));
+    compoundTree->emplace(ParseTreeNode::create(Token(")")));
 
     ASSERT_EQ(elementTree->isCompound(), false);
     ASSERT_EQ(elementTree->token().type(), TOKEN_NUM);

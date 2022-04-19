@@ -18,7 +18,16 @@ public:
     bool isCompound();
     Token token(); 
     const std::vector<ParseTreePointer>& children();
+
     void emplace(ParseTreePointer node);
+
+    static ParseTreePointer create() {
+        return std::make_shared<ParseTreeNode>();
+    }
+
+    static ParseTreePointer create(Token token) {
+        return std::make_shared<ParseTreeNode>(token);
+    }
 
 private:
     Token token_;

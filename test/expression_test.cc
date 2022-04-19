@@ -17,8 +17,8 @@ protected:
 };
 
 TEST_F(ExpressionTest, ValueExpression) {
-    ParseTreePointer num = std::make_shared<ParseTreeNode>(Token("42"));
-    ParseTreePointer quote = std::make_shared<ParseTreeNode>(Token("'hi"));
+    ParseTreePointer num = ParseTreeNode::create(Token("42"));
+    ParseTreePointer quote = ParseTreeNode::create(Token("'hi"));
 
     EXPECT_EQ(ValueExpression(num).eval(env_).num(), 42);
     EXPECT_EQ(ValueExpression(quote).eval(env_).quote(), "hi");
@@ -28,7 +28,7 @@ TEST_F(ExpressionTest, ValueExpression) {
 }
 
 TEST_F(ExpressionTest, DefineExpression1) {
-    ParseTreePointer num = std::make_shared<ParseTreeNode>(Token("42"));
+    ParseTreePointer num = ParseTreeNode::create(Token("42"));
     ExpressionPtr x = std::shared_ptr<Expression>(new ValueExpression(num));
 
     DefineExpression def("x", x);
