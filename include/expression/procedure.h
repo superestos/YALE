@@ -10,17 +10,24 @@ public:
     virtual Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const = 0;
 };
 
-class AddProcedure : public Procedure {
+class BinaryOperator : public Procedure {
+public:
+    virtual Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const = 0;
+protected:
+    std::pair<Value, Value> eval_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
+};
+
+class AddProcedure : public BinaryOperator {
 public:
     Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 };
 
-class EqualProcedure : public Procedure {
+class EqualProcedure : public BinaryOperator {
 public:
     Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 };
 
-class SmallProcedure : public Procedure {
+class SmallProcedure : public BinaryOperator {
 public:
     Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 };

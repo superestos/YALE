@@ -2,13 +2,18 @@
 
 #include <cassert>
 
-Value AddProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
-    Num sum = 0;
-    for (auto& arg: args) {
-        sum += arg->eval(env).num();
-    }
+std::pair<Value, Value> BinaryOperator::eval_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+    assert(args.size() == 2);
+    std::pair<Value, Value> pair = {args[0]->eval(env), args[1]->eval(env)};
+    assert(pair.first.type() == pair.second.type());
+    return pair;
+}
 
-    return Value(sum);
+Value AddProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+    Value left, right;
+    std::tie(left, right) = this->eval_args(env, args);
+    assert(left.type() == VALUE_NUM);
+    return Value(left.num() + right.num());
 }
 
 Value EqualProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
