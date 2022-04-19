@@ -11,13 +11,11 @@ protected:
 };
 
 TEST_F(ParserTest, Simple) {
-    EXPECT_EQ(parser_.isValid(), true);
-    //EXPECT_EQ(parser_.tree().size(), 0);
+    EXPECT_EQ(parser_.valid(), true);
 
     parser_.analyze(Token("1"));
 
-    EXPECT_EQ(parser_.isValid(), true);
-    //EXPECT_EQ(parser_.tree().size(), 1);
+    EXPECT_EQ(parser_.valid(), true);
     EXPECT_EQ(parser_.has_next(), true);
 }
 
@@ -27,12 +25,7 @@ TEST_F(ParserTest, MutlipleCommand) {
     scanner_.read();
     parser_.analyze(scanner_.tokens());
 
-    EXPECT_EQ(parser_.isValid(), true);
-    /*
-    EXPECT_EQ(parser_.tree().size(), 2);
-    EXPECT_EQ(parser_.tree()[0]->token().name(), "x");
-    EXPECT_EQ(parser_.tree()[1]->token().name(), "1");
-    */
+    EXPECT_EQ(parser_.valid(), true);
 
     EXPECT_EQ(parser_.has_next(), true);
     EXPECT_EQ(parser_.next()->token().name(), "x");
@@ -48,7 +41,7 @@ TEST_F(ParserTest, SingleParent) {
     scanner_.read();
     parser_.analyze(scanner_.tokens());
 
-    EXPECT_EQ(parser_.isValid(), true);
+    EXPECT_EQ(parser_.valid(), true);
     EXPECT_EQ(parser_.has_next(), true);
     auto tree = parser_.next();
     EXPECT_EQ(parser_.has_next(), false);
@@ -65,7 +58,7 @@ TEST_F(ParserTest, NestedParent) {
     scanner_.read();
     parser_.analyze(scanner_.tokens());
 
-    EXPECT_EQ(parser_.isValid(), true);
+    EXPECT_EQ(parser_.valid(), true);
     EXPECT_EQ(parser_.has_next(), true);
     auto tree = parser_.next();
     EXPECT_EQ(parser_.has_next(), false);
@@ -83,7 +76,7 @@ TEST_F(ParserTest, InvalidParentInput) {
     scanner_.read();
     parser_.analyze(scanner_.tokens());
 
-    EXPECT_EQ(parser_.isValid(), false);
+    EXPECT_EQ(parser_.valid(), false);
 }
 
 TEST_F(ParserTest, InvalidTokenInput) {
@@ -92,7 +85,7 @@ TEST_F(ParserTest, InvalidTokenInput) {
     scanner_.read();
     parser_.analyze(scanner_.tokens());
 
-    EXPECT_EQ(parser_.isValid(), false);
+    EXPECT_EQ(parser_.valid(), false);
 }
 
 TEST(ParseTreeTest, ParseType) {

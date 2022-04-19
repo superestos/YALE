@@ -7,7 +7,7 @@ void Parser::analyze(Token token) {
         stack_.push(node);
 
     } else if (token.type() == TOKEN_RPARENT) {
-        if (isValid()) {
+        if (valid()) {
             error_ = true;
         } else {
             stack_.pop();
@@ -23,7 +23,7 @@ void Parser::analyze(Token token) {
 }
 
 void Parser::insert(ParseTreePointer ptr) {
-    if (stack_.empty()) {
+    if (valid()) {
         trees_.emplace_back(ptr);
     } else {
         stack_.top()->emplace(ptr);

@@ -4,13 +4,6 @@
 
 class Parser {
 public:
-    /*
-    Parser() {
-        tree_ = std::make_shared<ParseTreeNode>();
-        stack_.push(tree_);
-    }
-    */
-
     void analyze(Token token);
 
     void analyze(const std::vector<Token>& tokens) {
@@ -26,10 +19,10 @@ public:
     }
 
     bool has_next() {
-        return !trees_.empty();
+        return trees_.size() > 1 || (trees_.size() == 1 && valid());
     }
 
-    bool isValid() {
+    bool valid() {
         return stack_.empty() && !error_;
     }
 
