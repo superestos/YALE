@@ -124,7 +124,7 @@ TEST_F(ProcedureTest, SelfDefinedIncrease) {
     EXPECT_EQ(func.call(env_, {expr("-42")}).num(), -41);
 }
 
-/*
+
 TEST_F(ProcedureTest, SelfDefinedFib) {
     auto fib_expr = expr("(if (< x 2) 1 (+ (fib (+ x -1)) (fib (+ x -2))))");
 
@@ -132,7 +132,16 @@ TEST_F(ProcedureTest, SelfDefinedFib) {
     env_->define("fib", Value(fib_func));
     env_->define("+", Value(std::shared_ptr<Procedure>(new AddProcedure())));
     env_->define("<", Value(std::shared_ptr<Procedure>(new SmallProcedure())));
+    env_->define("if", Value(std::shared_ptr<Procedure>(new IfProcedure())));
 
     EXPECT_EQ(fib_func->call(env_, {expr("1")}).num(), 1);
+    EXPECT_EQ(fib_func->call(env_, {expr("2")}).num(), 2);
+    EXPECT_EQ(fib_func->call(env_, {expr("3")}).num(), 3);
+    EXPECT_EQ(fib_func->call(env_, {expr("4")}).num(), 5);
+    EXPECT_EQ(fib_func->call(env_, {expr("5")}).num(), 8);
+    EXPECT_EQ(fib_func->call(env_, {expr("6")}).num(), 13);
+    EXPECT_EQ(fib_func->call(env_, {expr("7")}).num(), 21);
+    EXPECT_EQ(fib_func->call(env_, {expr("8")}).num(), 34);
+    EXPECT_EQ(fib_func->call(env_, {expr("9")}).num(), 55);
 }
-*/
+
