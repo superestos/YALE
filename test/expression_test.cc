@@ -14,6 +14,19 @@ protected:
     std::stringstream input_;
     Scanner scanner_{input_};
     Parser parser_;
+
+    void read(std::string str) {
+        input_.clear();
+        input_ << str;
+        scanner_.clear();
+        scanner_.read();
+        parser_.analyze(scanner_.tokens());
+    }
+
+    template <typename T>
+    bool isinstance(Expression *ptr) {
+        return dynamic_cast<T *>(ptr) != nullptr;
+    }
 };
 
 TEST_F(ExpressionTest, ValueExpression) {
@@ -25,6 +38,16 @@ TEST_F(ExpressionTest, ValueExpression) {
 
     EXPECT_EQ(ValueExpression(88).eval(env_).num(), 88);
     EXPECT_EQ(ValueExpression(Value("lisp")).eval(env_).quote(), "lisp");
+
+    read("24");
+    auto num_expr = Expression::create(parser_.next());
+    EXPECT_EQ(isinstance<ValueExpression>(num_expr.get()), true);
+    EXPECT_EQ(num_expr->eval(env_).num(), 24);
+
+    read("'xyz");
+    auto quote_expr = Expression::create(parser_.next());
+    EXPECT_EQ(isinstance<ValueExpression>(quote_expr.get()), true);
+    EXPECT_EQ(quote_expr->eval(env_).quote(), "xyz");
 }
 
 TEST_F(ExpressionTest, DefineExpression1) {
@@ -39,14 +62,12 @@ TEST_F(ExpressionTest, DefineExpression1) {
 }
 
 TEST_F(ExpressionTest, DefineExpression2) {
-    input_.clear();
-    input_ << "(define val 42)";
-    scanner_.read();
-    parser_.analyze(scanner_.tokens());
+    read("(define val 42)");
 
-    DefineExpression def(parser_.next());
-    Value value = def.eval(env_);
+    auto def = Expression::create(parser_.next());
+    Value value = def->eval(env_);
 
+    EXPECT_EQ(isinstance<DefineExpression>(def.get()), true);
     EXPECT_EQ(value.type(), VALUE_VOID);
     EXPECT_EQ(env_->get("val").num(), 42);
 }
@@ -55,6 +76,18 @@ TEST_F(ExpressionTest, VariableExpression1) {
     ExpressionPtr var = std::shared_ptr<Expression>(new VariableExpression("x"));
 
     env_->define("x", 314);
+    EXPECT_EQ(var->eval(env_).type(), VALUE_NUM);
+    EXPECT_EQ(var->eval(env_).num(), 314);
+}
+
+TEST_F(ExpressionTest, VariableExpression2) {
+    read("x");
+
+    env_->define("x", 314);
+    auto var = Expression::create(parser_.next());
+
+    EXPECT_EQ(isinstance<VariableExpression>(var.get()), true);
+    EXPECT_EQ(var->eval(env_).type(), VALUE_NUM);
     EXPECT_EQ(var->eval(env_).num(), 314);
 }
 

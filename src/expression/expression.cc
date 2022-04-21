@@ -13,7 +13,7 @@ ExpressionPtr Expression::create(const ParseTreePointer &parse_tree) {
         }
     } else {
         if (parse_tree->token().type() == TOKEN_ID) {
-            return std::make_shared<ValueExpression>(parse_tree);
+            return std::make_shared<VariableExpression>(parse_tree);
         }
     }
 
