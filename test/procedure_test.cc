@@ -106,3 +106,33 @@ TEST_F(ProcedureTest, SelfDefinedFib) {
     EXPECT_EQ(fib->call(env_, {1}).num(), 1);
 }
 */
+
+TEST_F(ProcedureTest, SelfDefinedIdentity) {
+    auto id = expr("x");
+    SelfDefinedProcedure identity(id, {"x"});
+
+    EXPECT_EQ(identity.call(env_, {expr("42")}).num(), 42);
+    EXPECT_EQ(identity.call(env_, {expr("'hi")}).quote(), "hi");
+}
+
+TEST_F(ProcedureTest, SelfDefinedIncrease) {
+    auto inc = expr("(+ x 1)");
+    SelfDefinedProcedure func(inc, {"x"});
+    env_->define("+", Value(std::shared_ptr<Procedure>(new AddProcedure())));
+
+    EXPECT_EQ(func.call(env_, {expr("42")}).num(), 43);
+    EXPECT_EQ(func.call(env_, {expr("-42")}).num(), -41);
+}
+
+/*
+TEST_F(ProcedureTest, SelfDefinedFib) {
+    auto fib_expr = expr("(if (< x 2) 1 (+ (fib (+ x -1)) (fib (+ x -2))))");
+
+    ProcedurePtr fib_func = std::shared_ptr<Procedure>(new SelfDefinedProcedure(fib_expr, {"x"}));
+    env_->define("fib", Value(fib_func));
+    env_->define("+", Value(std::shared_ptr<Procedure>(new AddProcedure())));
+    env_->define("<", Value(std::shared_ptr<Procedure>(new SmallProcedure())));
+
+    EXPECT_EQ(fib_func->call(env_, {expr("1")}).num(), 1);
+}
+*/
