@@ -14,35 +14,49 @@ protected:
     std::stringstream input_;
     Scanner scanner_{input_};
     Parser parser_;
+
+    void read(std::string str) {
+        input_.clear();
+        input_ << str;
+        scanner_.clear();
+        scanner_.read();
+        parser_.analyze(scanner_.tokens());
+    }
+
+    auto expr(std::string str) {
+        return Expression::create((read(str), parser_.next()));
+    }
 };
 
 TEST_F(ProcedureTest, Add) {
     AddProcedure add;
-    ExpressionPtr val1 = std::shared_ptr<Expression>(new ValueExpression(2));
-    ExpressionPtr val2 = std::shared_ptr<Expression>(new ValueExpression(4));
+    auto val1 = expr("2");
+    auto val2 = expr("4");
+
     std::vector<ExpressionPtr> args = {val1, val2};
 
     EXPECT_EQ(add.call(env_, args).num(), 6);
 }
 
-/*
 TEST_F(ProcedureTest, Condition) {
     EqualProcedure equal;
     SmallProcedure small;
     IfProcedure cond;
 
-    EXPECT_EQ(equal.call(env_, {2, 2}).num(), 1);
-    EXPECT_EQ(equal.call(env_, {3, 2}).num(), 0);
-    EXPECT_EQ(equal.call(env_, {Value("b"), Value("b")}).num(), 1);
-    EXPECT_EQ(equal.call(env_, {Value("yes"), Value("no")}).num(), 0);
+    EXPECT_EQ(equal.call(env_, {expr("2"), expr("2")}).num(), 1);
+    EXPECT_EQ(equal.call(env_, {expr("3"), expr("2")}).num(), 0);
+    EXPECT_EQ(equal.call(env_, {expr("'b"), expr("'b")}).num(), 1);
+    EXPECT_EQ(equal.call(env_, {expr("'yes"), expr("'no")}).num(), 0);
 
-    EXPECT_EQ(cond.call(env_, {1, 2, 3}).num(), 2);
-    EXPECT_EQ(cond.call(env_, {0, 2, 3}).num(), 3);
+    EXPECT_EQ(cond.call(env_, {expr("1"), expr("2"), expr("3")}).num(), 2);
+    EXPECT_EQ(cond.call(env_, {expr("0"), expr("2"), expr("3")}).num(), 3);
 
-    EXPECT_EQ(cond.call(env_, {small.call(env_, {1, 2}).num(), 2, 3}).num(), 2);
-    EXPECT_EQ(cond.call(env_, {small.call(env_, {3, 2}).num(), 2, 3}).num(), 3);
+    env_->define("<", Value(std::shared_ptr<Procedure>(new SmallProcedure())));
+    EXPECT_EQ(cond.call(env_, {expr("(< 1 2)"), expr("2"), expr("3")}).num(), 2);
+    EXPECT_EQ(cond.call(env_, {expr("(< 3 2)"), expr("2"), expr("3")}).num(), 3);
 }
 
+/*
 TEST_F(ProcedureTest, SelfDefinedIdentity) {
     ExpressionPtr expr = std::shared_ptr<Expression>(new VariableExpression("x"));
     SelfDefinedProcedure identity(expr, {"x"});
