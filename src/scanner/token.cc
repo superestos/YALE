@@ -6,7 +6,7 @@ Token::Token(std::string name): name_{name} {
         return;
     }
 
-    if (isNum(name[0])) {
+    if (isNum(name[0]) || name[0] == '-') {
         for (size_t i = 1; i < name.size(); i++) {
             if (!isNum(name[i])) {
                 type_ = TOKEN_ERR;

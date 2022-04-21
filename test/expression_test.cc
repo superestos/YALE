@@ -51,14 +51,14 @@ TEST_F(ExpressionTest, ValueExpression) {
 }
 
 TEST_F(ExpressionTest, DefineExpression1) {
-    ParseTreePointer num = ParseTreeNode::create(Token("42"));
+    ParseTreePointer num = ParseTreeNode::create(Token("-42"));
     ExpressionPtr x = std::shared_ptr<Expression>(new ValueExpression(num));
 
     DefineExpression def("x", x);
     Value value = def.eval(env_);
 
     EXPECT_EQ(value.type(), VALUE_VOID);
-    EXPECT_EQ(env_->get("x").num(), 42);
+    EXPECT_EQ(env_->get("x").num(), -42);
 }
 
 TEST_F(ExpressionTest, DefineExpression2) {

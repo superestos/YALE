@@ -60,7 +60,9 @@ TEST(TokenTest, TokenType) {
     ASSERT_EQ(Token().type(), TOKEN_ERR);
     ASSERT_EQ(Token("").type(), TOKEN_ERR);
     ASSERT_EQ(Token("123").type(), TOKEN_NUM);
+    ASSERT_EQ(Token("-123").type(), TOKEN_NUM);
     ASSERT_EQ(Token("1ab").type(), TOKEN_ERR);
+    ASSERT_EQ(Token("-ab").type(), TOKEN_ERR);
     ASSERT_EQ(Token("L1").type(), TOKEN_ID);
     ASSERT_EQ(Token("'a").type(), TOKEN_QUOTE);
     ASSERT_EQ(Token("define").type(), TOKEN_DEFINE);
