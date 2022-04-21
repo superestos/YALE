@@ -58,6 +58,7 @@ TEST_F(ExpressionTest, VariableExpression1) {
     EXPECT_EQ(var->eval(env_).num(), 314);
 }
 
+/*
 TEST_F(ExpressionTest, ApplyExpression1) {
     ExpressionPtr x = std::shared_ptr<Expression>(new VariableExpression("x"));
     ProcedurePtr id = std::shared_ptr<Procedure>(new SelfDefinedProcedure(x, {"x"}));
@@ -67,6 +68,7 @@ TEST_F(ExpressionTest, ApplyExpression1) {
 
     EXPECT_EQ(apply->eval(env_).num(), 365);
 }
+*/
 
 TEST_F(ExpressionTest, DynamicApplyExpression1) {
     env_->define("+", Value(std::shared_ptr<Procedure>(new AddProcedure())));
