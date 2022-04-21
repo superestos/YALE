@@ -114,6 +114,16 @@ TEST_F(ExpressionTest, DynamicApplyExpression1) {
     EXPECT_EQ(expr->eval(env_).num(), 9);
 }
 
+TEST_F(ExpressionTest, DynamicApplyExpression2) {
+    env_->define("+", Value(std::shared_ptr<Procedure>(new AddProcedure())));
+    read("(+ 7 3)");
+
+    auto apply = Expression::create(parser_.next());
+
+    EXPECT_EQ(isinstance<DynamicApplyExpression>(apply.get()), true);
+    EXPECT_EQ(apply->eval(env_).num(), 10);
+}
+
 TEST(ValueTest, BasicValue) {
     Value n(42);
     Value q("hello world");
