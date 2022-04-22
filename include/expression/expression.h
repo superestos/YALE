@@ -12,6 +12,7 @@ typedef enum {
     VALUE_NUM,
     VALUE_QUOTE,
     VALUE_PROCEDURE,
+    VALUE_CONSTRUCT,
 } ValueType;
 
 class Value;
@@ -34,6 +35,7 @@ public:
 
 typedef int Num;
 typedef std::string Quote;
+typedef std::array<std::shared_ptr<Value>, 2> Construct;
 
 class Value {
 public:
@@ -45,16 +47,20 @@ public:
 
     Value(ProcedurePtr value): type_{VALUE_PROCEDURE}, procedure_{value} {}
 
+    Value(Construct cons): type_{VALUE_CONSTRUCT}, cons_{cons} {}
+
     ValueType type() const;
     Num num() const;
     const Quote& quote() const;
     const ProcedurePtr procedure() const;
+    const Construct cons() const;
 
 private:
     ValueType type_;
     Num num_;
     Quote quote_;
     ProcedurePtr procedure_;
+    Construct cons_;
 };
 
 class ValueExpression : public Expression {

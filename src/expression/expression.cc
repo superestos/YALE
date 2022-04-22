@@ -39,6 +39,11 @@ const ProcedurePtr Value::procedure() const {
     return procedure_;
 }
 
+const Construct Value::cons() const {
+    assert(type() == VALUE_CONSTRUCT);
+    return cons_;
+}
+
 ValueExpression::ValueExpression(const ParseTreePointer &parse_tree) {
     if (!parse_tree->isCompound()) {
         Token token = parse_tree->token();

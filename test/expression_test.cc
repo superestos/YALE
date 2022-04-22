@@ -135,11 +135,18 @@ TEST_F(ExpressionTest, DefineProcedureAndApply2) {
 
 TEST(ValueTest, BasicValue) {
     Value n(42);
-    Value q("hello world");
+    Value q("lisp");
+    Value c({std::make_shared<Value>(42), std::make_shared<Value>("lisp")});
 
     EXPECT_EQ(n.type(), VALUE_NUM);
     EXPECT_EQ(n.num(), 42);
 
     EXPECT_EQ(q.type(), VALUE_QUOTE);
-    EXPECT_EQ(q.quote(), "hello world");
+    EXPECT_EQ(q.quote(), "lisp");
+
+    EXPECT_EQ(c.type(), VALUE_CONSTRUCT);
+    EXPECT_EQ(c.cons()[0]->type(), VALUE_NUM);
+    EXPECT_EQ(c.cons()[0]->num(), 42);
+    EXPECT_EQ(c.cons()[1]->type(), VALUE_QUOTE);
+    EXPECT_EQ(c.cons()[1]->quote(), "lisp");
 }
