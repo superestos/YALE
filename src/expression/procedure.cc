@@ -2,11 +2,6 @@
 
 #include <cassert>
 
-template <typename T>
-ProcedurePtr Procedure::create() {
-    return std::shared_ptr<Procedure>(new T());
-}
-
 ProcedurePtr SelfDefinedProcedure::create(ExpressionPtr expr, const std::vector<std::string>& names) {
     return std::shared_ptr<Procedure>(new SelfDefinedProcedure(expr, names));
 }

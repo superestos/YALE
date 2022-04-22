@@ -39,13 +39,3 @@ TEST_F(EnvironmentTest, EnclosingEnvironment) {
     ASSERT_EQ(local_->existed("x"), true);
     ASSERT_EQ(local_->get("x").num(), 42);
 }
-
-/*
-TEST_F(EnvironmentTest, ProcedureEnvironment) {
-    ASSERT_EQ(global_->existed("+"), false);
-
-    global_->define("+", Value(std::shared_ptr<Procedure>(new AddProcedure())));
-    ASSERT_EQ(global_->existed("+"), true);
-    ASSERT_EQ(global_->get("+").procedure()->call(global_, {4, 5}).num(), 9);
-}
-*/

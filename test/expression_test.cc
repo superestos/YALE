@@ -95,20 +95,8 @@ TEST_F(ExpressionTest, VariableExpression2) {
     EXPECT_EQ(var->eval(env_).num(), 314);
 }
 
-/*
 TEST_F(ExpressionTest, ApplyExpression1) {
-    ExpressionPtr x = std::shared_ptr<Expression>(new VariableExpression("x"));
-    ProcedurePtr id = std::shared_ptr<Procedure>(new SelfDefinedProcedure(x, {"x"}));
-
-    ExpressionPtr val = std::shared_ptr<Expression>(new ValueExpression(365));
-    ExpressionPtr apply = std::shared_ptr<Expression>(new ApplyExpression(id, {val}));
-
-    EXPECT_EQ(apply->eval(env_).num(), 365);
-}
-*/
-
-TEST_F(ExpressionTest, ApplyExpression1) {
-    env_->define("+", Value(std::shared_ptr<Procedure>(new AddProcedure())));
+    env_->define("+", Value(Procedure::create<AddProcedure>()));
 
     ExpressionPtr num1 = std::shared_ptr<Expression>(new ValueExpression(Value(8)));
     ExpressionPtr num2 = std::shared_ptr<Expression>(new ValueExpression(Value(1)));
@@ -119,7 +107,7 @@ TEST_F(ExpressionTest, ApplyExpression1) {
 }
 
 TEST_F(ExpressionTest, ApplyExpression2) {
-    env_->define("+", Value(std::shared_ptr<Procedure>(new AddProcedure())));
+    env_->define("+", Value(Procedure::create<AddProcedure>()));
     read("(+ 7 3)");
 
     auto apply = Expression::create(parser_.next());

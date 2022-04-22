@@ -10,7 +10,9 @@ public:
     virtual Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const = 0;
 
     template <typename T>
-    static ProcedurePtr create();
+    static ProcedurePtr create() {
+        return std::shared_ptr<Procedure>(new T());
+    }
 };
 
 class BinaryOperator : public Procedure {
