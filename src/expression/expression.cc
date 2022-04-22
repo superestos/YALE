@@ -52,6 +52,20 @@ ValueExpression::ValueExpression(const ParseTreePointer &parse_tree) {
         } else if (token.type() == TOKEN_NUM) {
             value_ = Value(std::stoi(token.name()));
         }
+    } else {
+        auto& children = parse_tree->children();
+        assert(children.size() == 3);
+        assert(children[0]->token().name() == "lambda");
+        assert(children[1]->isCompound());
+
+        std::vector<std::string> names;
+        for (auto &arg: children) {
+            assert(arg->token().type() == TOKEN_ID);
+            names.emplace_back(arg->token().name());
+        }
+
+        auto expr = Expression::create(children[2]);
+        value_ = Value(SelfDefinedProcedure::create(expr, names));
     }
 }
 
@@ -61,12 +75,12 @@ Value ValueExpression::eval(const EnvironmentPtr &env) const {
 
 DefineExpression::DefineExpression(const ParseTreePointer &parse_tree) {
     assert(parse_tree->isCompound());
-    auto& args = parse_tree->children();
-    assert(args.size() == 3);
-    assert(args[0]->token().name() == "define");
+    auto& children = parse_tree->children();
+    assert(children.size() == 3);
+    assert(children[0]->token().name() == "define");
 
-    if (args[1]->isCompound()) {
-        auto& def = args[1]->children();
+    if (children[1]->isCompound()) {
+        auto& def = children[1]->children();
         assert(def[0]->token().type() == TOKEN_ID);
         name_ = def[0]->token().name();
 
@@ -76,12 +90,12 @@ DefineExpression::DefineExpression(const ParseTreePointer &parse_tree) {
         }
 
     } else {
-        assert(args[1]->token().type() == TOKEN_ID);
-        name_ = args[1]->token().name(); 
+        assert(children[1]->token().type() == TOKEN_ID);
+        name_ = children[1]->token().name(); 
 
     }
 
-    expr_ = Expression::create(args[2]);
+    expr_ = Expression::create(children[2]);
 }
 
 Value DefineExpression::eval(const EnvironmentPtr &env) const {

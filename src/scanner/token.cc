@@ -33,6 +33,11 @@ Token::Token(std::string name): name_{name} {
         return;
     }
 
+    if (name == "lambda") {
+        type_ = TOKEN_LAMBDA;
+        return;
+    }
+
     if (name == "(") {
         type_ = TOKEN_LPARENT;
         return;
