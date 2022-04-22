@@ -6,18 +6,24 @@
 ExpressionPtr Expression::create(const ParseTreePointer &parse_tree) {
     if (parse_tree->isCompound()) {
         assert(parse_tree->children().size() > 0);
-        if (parse_tree->children()[0]->token().name() == "define") {
-            return std::make_shared<DefineExpression>(parse_tree);
-        } else if (parse_tree->children()[0]->token().type() == TOKEN_ID) {
+        if (parse_tree->children()[0]->isCompound()) {
             return std::make_shared<ApplyExpression>(parse_tree);
+        } else {
+            if (parse_tree->children()[0]->token().name() == "define") {
+                return std::make_shared<DefineExpression>(parse_tree);
+            } else if (parse_tree->children()[0]->token().name() == "lambda") {
+                return std::make_shared<ValueExpression>(parse_tree);
+            } else {
+                return std::make_shared<ApplyExpression>(parse_tree);
+            }
         }
     } else {
         if (parse_tree->token().type() == TOKEN_ID) {
             return std::make_shared<VariableExpression>(parse_tree);
+        } else {
+            return std::make_shared<ValueExpression>(parse_tree);
         }
     }
-
-    return std::make_shared<ValueExpression>(parse_tree);
 }
 
 ValueType Value::type() const {
@@ -122,14 +128,23 @@ Value VariableExpression::eval(const EnvironmentPtr &env) const {
 ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree) {
     assert(parse_tree->isCompound());
     auto children = parse_tree->children();
-    assert(children[0]->token().type() == TOKEN_ID);
+    //assert(children[0]->token().type() == TOKEN_ID);
 
-    name_ = children[0]->token().name();
+    if (children[0]->isCompound()) {
+        lambda_ = Expression::create(children[0]);
+    } else {
+        name_ = children[0]->token().name();
+    }
+
     for (size_t i = 1; i < children.size(); i++) {
         args_.emplace_back(Expression::create(children[i]));
     }
 }
 
 Value ApplyExpression::eval(const EnvironmentPtr &env) const {
-    return env->get(name_).procedure()->call(env, args_);
+    if (lambda_.get() == nullptr) {
+        return env->get(name_).procedure()->call(env, args_);
+    } else {
+        return lambda_->eval(env).procedure()->call(env, args_);
+    }
 }

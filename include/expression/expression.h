@@ -110,5 +110,6 @@ public:
 
 private:
     std::string name_;
+    ExpressionPtr lambda_;
     std::vector<ExpressionPtr> args_;
 };

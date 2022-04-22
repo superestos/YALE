@@ -138,10 +138,12 @@ TEST_F(ExpressionTest, DefineProcedureAndApply2) {
 }
 
 TEST_F(ExpressionTest, LambdaExpression) {
+    env_->define("+", Value(Procedure::create<AddProcedure>()));
+    
     auto lambda = expr("(lambda (x) (+ x x))");
     EXPECT_EQ(isinstance<ValueExpression>(lambda.get()), true);
 
-    //EXPECT_EQ(eval("((lambda (x) (+ x x)) 5)").num(), 10);
+    EXPECT_EQ(eval("((lambda (x) (+ x x)) 5)").num(), 10);
 }
 
 TEST(ValueTest, BasicValue) {
