@@ -26,6 +26,10 @@ protected:
     auto expr(std::string str) {
         return Expression::create((read(str), parser_.next()));
     }
+
+    auto eval(std::string str) {
+        return expr(str)->eval(env_);
+    }
 };
 
 TEST_F(ProcedureTest, Add) {
@@ -54,6 +58,16 @@ TEST_F(ProcedureTest, Condition) {
     env_->define("<", Value(Procedure::create<SmallProcedure>()));
     EXPECT_EQ(cond.call(env_, {expr("(< 1 2)"), expr("2"), expr("3")}).num(), 2);
     EXPECT_EQ(cond.call(env_, {expr("(< 3 2)"), expr("2"), expr("3")}).num(), 3);
+}
+
+TEST_F(ProcedureTest, Construct) {
+    env_->define("cons", Value(Procedure::create<ConsProcedure>()));
+    env_->define("car", Value(Procedure::create<CarProcedure>()));
+    env_->define("cdr", Value(Procedure::create<CdrProcedure>()));
+
+    eval("(define x (cons 1 2))");
+    EXPECT_EQ(eval("(car x)").num(), 1);
+    EXPECT_EQ(eval("(cdr x)").num(), 2);
 }
 
 TEST_F(ProcedureTest, SelfDefinedIdentity) {

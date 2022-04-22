@@ -66,6 +66,25 @@ Value IfProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionP
     return cond.num() != 0? args[1]->eval(env): args[2]->eval(env);
 }
 
+Value ConsProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+    assert(args.size() == 2);
+    return Value({std::make_shared<Value>(args[0]->eval(env)), std::make_shared<Value>(args[1]->eval(env))});
+}
+
+Value CarProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+    assert(args.size() == 1);
+    Value value = args[0]->eval(env);
+    assert(value.type() == VALUE_CONSTRUCT);
+    return *value.cons()[0];
+}
+
+Value CdrProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+    assert(args.size() == 1);
+    Value value = args[0]->eval(env);
+    assert(value.type() == VALUE_CONSTRUCT);
+    return *value.cons()[1];
+}
+
 Value SelfDefinedProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
     assert(args.size() == names_.size());
     EnvironmentPtr new_env = EnvironmentManager::create(env);

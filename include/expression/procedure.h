@@ -42,6 +42,21 @@ public:
     Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 };
 
+class ConsProcedure : public Procedure {
+public:
+    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
+};
+
+class CarProcedure : public Procedure {
+public:
+    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
+};
+
+class CdrProcedure : public Procedure {
+public:
+    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
+};
+
 class SelfDefinedProcedure : public Procedure {
 public:
     SelfDefinedProcedure(ExpressionPtr expr, const std::vector<std::string>& names):
