@@ -137,7 +137,7 @@ TEST_F(ExpressionTest, DefineProcedureAndApply2) {
     EXPECT_EQ(apply.eval(env_).quote(), "abc");
 }
 
-TEST_F(ExpressionTest, LambdaExpression) {
+TEST_F(ExpressionTest, LambdaExpressionBasics) {
     env_->define("+", Value(Procedure::create<AddProcedure>()));
 
     auto lambda = expr("(lambda (x) (+ x x))");
@@ -146,6 +146,20 @@ TEST_F(ExpressionTest, LambdaExpression) {
     auto apply = expr(("((lambda (x) (+ x x)) 5)"));
     EXPECT_EQ(isinstance<ApplyExpression>(apply.get()), true);
     EXPECT_EQ(apply->eval(env_).num(), 10);
+}
+
+TEST_F(ExpressionTest, LambdaExpressionMultiVariable) {
+    env_->define("+", Value(Procedure::create<AddProcedure>()));
+
+    auto lambda = expr("(lambda (x y) (+ x y))");
+    EXPECT_EQ(isinstance<ValueExpression>(lambda.get()), true);
+    eval("(define add (lambda (x y) (+ x y)))");
+
+    EXPECT_EQ(isinstance<ApplyExpression>(expr("(add 3 2)").get()), true);
+    EXPECT_EQ(eval("(add 3 2)").num(), 5);
+
+    EXPECT_EQ(isinstance<ApplyExpression>(expr("(add 1)").get()), true);
+    eval("(define inc (add 1))");
 }
 
 TEST(ValueTest, BasicValue) {
