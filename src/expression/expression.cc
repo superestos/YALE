@@ -59,21 +59,25 @@ ValueExpression::ValueExpression(const ParseTreePointer &parse_tree) {
             value_ = Value(std::stoi(token.name()));
         }
     } else {
-        auto& children = parse_tree->children();
-        assert(children.size() == 3);
-        assert(children[0]->token().name() == "lambda");
-        assert(children[1]->isCompound());
-
-        std::vector<std::string> names;
-        auto args = children[1]->children();
-        for (auto &arg: args) {
-            assert(arg->token().type() == TOKEN_ID);
-            names.emplace_back(arg->token().name());
-        }
-
-        auto expr = Expression::create(children[2]);
-        value_ = Value(SelfDefinedProcedure::create(expr, names));
+        value_ = this->parse_lambda(parse_tree);
     }
+}
+
+Value ValueExpression::parse_lambda(const ParseTreePointer &parse_tree) {
+    auto& children = parse_tree->children();
+    assert(children.size() == 3);
+    assert(children[0]->token().name() == "lambda");
+    assert(children[1]->isCompound());
+
+    std::vector<std::string> names;
+    auto args = children[1]->children();
+    for (auto &arg: args) {
+        assert(arg->token().type() == TOKEN_ID);
+        names.emplace_back(arg->token().name());
+    }
+
+    auto expr = Expression::create(children[2]);
+    return Value(SelfDefinedProcedure::create(expr, names));
 }
 
 Value ValueExpression::eval(const EnvironmentPtr &env) const {
@@ -128,13 +132,9 @@ Value VariableExpression::eval(const EnvironmentPtr &env) const {
 ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree) {
     assert(parse_tree->isCompound());
     auto children = parse_tree->children();
-    //assert(children[0]->token().type() == TOKEN_ID);
+    assert(children.size() > 0);
 
-    if (children[0]->isCompound()) {
-        lambda_ = Expression::create(children[0]);
-    } else {
-        name_ = children[0]->token().name();
-    }
+    function_ = Expression::create(children[0]);
 
     for (size_t i = 1; i < children.size(); i++) {
         args_.emplace_back(Expression::create(children[i]));
@@ -142,9 +142,5 @@ ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree) {
 }
 
 Value ApplyExpression::eval(const EnvironmentPtr &env) const {
-    if (lambda_.get() == nullptr) {
-        return env->get(name_).procedure()->call(env, args_);
-    } else {
-        return lambda_->eval(env).procedure()->call(env, args_);
-    }
+    return function_->eval(env).procedure()->call(env, args_);
 }

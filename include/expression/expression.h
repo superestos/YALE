@@ -29,7 +29,6 @@ typedef std::shared_ptr<Expression> ExpressionPtr;
 class Expression {
 public:
     virtual Value eval(const EnvironmentPtr &env) const = 0;
-
     static ExpressionPtr create(const ParseTreePointer &parse_tree);
 };
 
@@ -72,6 +71,8 @@ public:
 
 private:
     Value value_;
+    
+    Value parse_lambda(const ParseTreePointer &parse_tree);
 };
 
 class DefineExpression : public Expression {
@@ -102,14 +103,13 @@ private:
 
 class ApplyExpression : public Expression {
 public:
-    ApplyExpression(const std::string &name, const std::vector<ExpressionPtr>& args):
-        name_{name}, args_{args} {}
+    ApplyExpression(const ExpressionPtr &function, const std::vector<ExpressionPtr> &args):
+        function_{function}, args_{args} {}
 
     ApplyExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
 
 private:
-    std::string name_;
-    ExpressionPtr lambda_;
+    ExpressionPtr function_;
     std::vector<ExpressionPtr> args_;
 };

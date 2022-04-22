@@ -105,9 +105,9 @@ TEST_F(ExpressionTest, ApplyExpression1) {
     ExpressionPtr num1 = std::shared_ptr<Expression>(new ValueExpression(Value(8)));
     ExpressionPtr num2 = std::shared_ptr<Expression>(new ValueExpression(Value(1)));
     
-    ExpressionPtr expr = std::shared_ptr<Expression>(new ApplyExpression("+", {num1, num2}));
+    ExpressionPtr apply = std::shared_ptr<Expression>(new ApplyExpression(expr("+"), {num1, num2}));
 
-    EXPECT_EQ(expr->eval(env_).num(), 9);
+    EXPECT_EQ(apply->eval(env_).num(), 9);
 }
 
 TEST_F(ExpressionTest, ApplyExpression2) {
@@ -125,7 +125,7 @@ TEST_F(ExpressionTest, DefineProcedureAndApply1) {
     EXPECT_EQ(isinstance<DefineExpression>(def.get()), true);
     EXPECT_EQ(def->eval(env_).type(), VALUE_VOID);
 
-    ApplyExpression apply("id", {expr("42")});
+    ApplyExpression apply(expr("id"), {expr("42")});
     EXPECT_EQ(apply.eval(env_).num(), 42);
 }
 
@@ -133,7 +133,7 @@ TEST_F(ExpressionTest, DefineProcedureAndApply2) {
     DefineExpression def("id", expr("x"), {"x"});
     def.eval(env_);
 
-    ApplyExpression apply("id", {expr("'abc")});
+    ApplyExpression apply(expr("id"), {expr("'abc")});
     EXPECT_EQ(apply.eval(env_).quote(), "abc");
 }
 
