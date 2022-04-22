@@ -33,5 +33,3 @@ private:
     Token token_;
     std::vector<ParseTreePointer> children_;
 };
-
-

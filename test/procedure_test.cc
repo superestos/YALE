@@ -107,4 +107,3 @@ TEST_F(ProcedureTest, SelfDefinedFib) {
     EXPECT_EQ(fib_func->call(env_, {expr("8")}).num(), 34);
     EXPECT_EQ(fib_func->call(env_, {expr("9")}).num(), 55);
 }
-

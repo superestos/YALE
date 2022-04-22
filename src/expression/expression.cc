@@ -6,17 +6,17 @@
 ExpressionPtr Expression::create(const ParseTreePointer &parse_tree) {
     if (parse_tree->isCompound()) {
         assert(parse_tree->children().size() > 0);
-        if (parse_tree->children()[0]->isCompound()) {
-            return std::make_shared<ApplyExpression>(parse_tree);
-        } else {
-            if (parse_tree->children()[0]->token().name() == "define") {
+        auto &children = parse_tree->children();
+
+        if (!children[0]->isCompound()) {
+            if (children[0]->token().name() == "define") {
                 return std::make_shared<DefineExpression>(parse_tree);
-            } else if (parse_tree->children()[0]->token().name() == "lambda") {
+            } else if (children[0]->token().name() == "lambda") {
                 return std::make_shared<ValueExpression>(parse_tree);
-            } else {
-                return std::make_shared<ApplyExpression>(parse_tree);
             }
         }
+        return std::make_shared<ApplyExpression>(parse_tree);
+
     } else {
         if (parse_tree->token().type() == TOKEN_ID) {
             return std::make_shared<VariableExpression>(parse_tree);
