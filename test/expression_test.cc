@@ -103,24 +103,24 @@ TEST_F(ExpressionTest, ApplyExpression1) {
 }
 */
 
-TEST_F(ExpressionTest, DynamicApplyExpression1) {
+TEST_F(ExpressionTest, ApplyExpression1) {
     env_->define("+", Value(std::shared_ptr<Procedure>(new AddProcedure())));
 
     ExpressionPtr num1 = std::shared_ptr<Expression>(new ValueExpression(Value(8)));
     ExpressionPtr num2 = std::shared_ptr<Expression>(new ValueExpression(Value(1)));
     
-    ExpressionPtr expr = std::shared_ptr<Expression>(new DynamicApplyExpression("+", {num1, num2}));
+    ExpressionPtr expr = std::shared_ptr<Expression>(new ApplyExpression("+", {num1, num2}));
 
     EXPECT_EQ(expr->eval(env_).num(), 9);
 }
 
-TEST_F(ExpressionTest, DynamicApplyExpression2) {
+TEST_F(ExpressionTest, ApplyExpression2) {
     env_->define("+", Value(std::shared_ptr<Procedure>(new AddProcedure())));
     read("(+ 7 3)");
 
     auto apply = Expression::create(parser_.next());
 
-    EXPECT_EQ(isinstance<DynamicApplyExpression>(apply.get()), true);
+    EXPECT_EQ(isinstance<ApplyExpression>(apply.get()), true);
     EXPECT_EQ(apply->eval(env_).num(), 10);
 }
 
@@ -134,13 +134,3 @@ TEST(ValueTest, BasicValue) {
     EXPECT_EQ(q.type(), VALUE_QUOTE);
     EXPECT_EQ(q.quote(), "hello world");
 }
-
-/*
-TEST(valueTest, BasicValue) {
-    NumValue n(42);
-    QuoteValue q("hello world");
-
-    EXPECT_EQ(n(), 42);
-    EXPECT_EQ(q(), "hello world");
-}
-*/

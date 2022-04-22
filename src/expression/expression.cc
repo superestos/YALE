@@ -9,7 +9,7 @@ ExpressionPtr Expression::create(const ParseTreePointer &parse_tree) {
         if (parse_tree->children()[0]->token().name() == "define") {
             return std::make_shared<DefineExpression>(parse_tree);
         } else if (parse_tree->children()[0]->token().type() == TOKEN_ID) {
-            return std::make_shared<DynamicApplyExpression>(parse_tree);
+            return std::make_shared<ApplyExpression>(parse_tree);
         }
     } else {
         if (parse_tree->token().type() == TOKEN_ID) {
@@ -82,13 +82,7 @@ Value VariableExpression::eval(const EnvironmentPtr &env) const {
     return env->get(name_);
 }
 
-/*
-Value ApplyExpression::eval(const EnvironmentPtr &env) const {
-    return procedure_->call(env, args_);
-}
-*/
-
-DynamicApplyExpression::DynamicApplyExpression(const ParseTreePointer &parse_tree) {
+ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree) {
     assert(parse_tree->isCompound());
     auto children = parse_tree->children();
     assert(children[0]->token().type() == TOKEN_ID);
@@ -99,6 +93,6 @@ DynamicApplyExpression::DynamicApplyExpression(const ParseTreePointer &parse_tre
     }
 }
 
-Value DynamicApplyExpression::eval(const EnvironmentPtr &env) const {
+Value ApplyExpression::eval(const EnvironmentPtr &env) const {
     return env->get(name_).procedure()->call(env, args_);
 }

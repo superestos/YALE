@@ -93,27 +93,12 @@ private:
     std::string name_;
 };
 
-/*
 class ApplyExpression : public Expression {
 public:
-    ApplyExpression(ProcedurePtr procedure, const std::vector<ExpressionPtr>& args):
-        procedure_{procedure}, args_{args} {}
-
-    ApplyExpression(const ParseTreePointer &parse_tree);
-    Value eval(const EnvironmentPtr &env) const;
-
-private:
-    ProcedurePtr procedure_;
-    std::vector<ExpressionPtr> args_;
-};
-*/
-
-class DynamicApplyExpression : public Expression {
-public:
-    DynamicApplyExpression(const std::string &name, const std::vector<ExpressionPtr>& args):
+    ApplyExpression(const std::string &name, const std::vector<ExpressionPtr>& args):
         name_{name}, args_{args} {}
 
-    DynamicApplyExpression(const ParseTreePointer &parse_tree);
+    ApplyExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
 
 private:
