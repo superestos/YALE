@@ -128,22 +128,21 @@ TEST_F(ExpressionTest, ApplyExpression2) {
     EXPECT_EQ(apply->eval(env_).num(), 10);
 }
 
-TEST_F(ExpressionTest, DefineProcedureAndApply) {
+TEST_F(ExpressionTest, DefineProcedureAndApply1) {
     auto def = expr("(define (id x) x)");
     EXPECT_EQ(isinstance<DefineExpression>(def.get()), true);
     EXPECT_EQ(def->eval(env_).type(), VALUE_VOID);
-    
-    /*
-    read("(id 42)");
-    auto apply = Expression::create(parser_.next());
-    Value value = apply->eval(env_);
-    EXPECT_EQ(isinstance<ApplyExpression>(apply.get()), true);
-    //EXPECT_EQ(value.type(), VALUE_QUOTE);
-    EXPECT_EQ(value.num(), 42);
-    */
 
     ApplyExpression apply("id", {expr("42")});
     EXPECT_EQ(apply.eval(env_).num(), 42);
+}
+
+TEST_F(ExpressionTest, DefineProcedureAndApply2) {
+    DefineExpression def("id", expr("x"), {"x"});
+    def.eval(env_);
+
+    ApplyExpression apply("id", {expr("'abc")});
+    EXPECT_EQ(apply.eval(env_).quote(), "abc");
 }
 
 TEST(ValueTest, BasicValue) {

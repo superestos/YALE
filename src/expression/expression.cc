@@ -76,7 +76,7 @@ DefineExpression::DefineExpression(const ParseTreePointer &parse_tree) {
 
     }
 
-    expr_ = std::shared_ptr<Expression>(new ValueExpression(args[2]));
+    expr_ = Expression::create(args[2]);
 }
 
 Value DefineExpression::eval(const EnvironmentPtr &env) const {
