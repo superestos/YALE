@@ -27,6 +27,10 @@ protected:
         return Expression::create((read(str), parser_.next()));
     }
 
+    auto eval(std::string str) {
+        return expr(str)->eval(env_);
+    }
+
     template <typename T>
     bool isinstance(Expression *ptr) {
         return dynamic_cast<T *>(ptr) != nullptr;
@@ -131,6 +135,13 @@ TEST_F(ExpressionTest, DefineProcedureAndApply2) {
 
     ApplyExpression apply("id", {expr("'abc")});
     EXPECT_EQ(apply.eval(env_).quote(), "abc");
+}
+
+TEST_F(ExpressionTest, LambdaExpression) {
+    auto lambda = expr("(lambda (x) (+ x x))");
+    EXPECT_EQ(isinstance<ValueExpression>(lambda.get()), true);
+
+    //EXPECT_EQ(eval("((lambda (x) (+ x x)) 5)").num(), 10);
 }
 
 TEST(ValueTest, BasicValue) {

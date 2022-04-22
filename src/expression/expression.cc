@@ -59,7 +59,8 @@ ValueExpression::ValueExpression(const ParseTreePointer &parse_tree) {
         assert(children[1]->isCompound());
 
         std::vector<std::string> names;
-        for (auto &arg: children) {
+        auto args = children[1]->children();
+        for (auto &arg: args) {
             assert(arg->token().type() == TOKEN_ID);
             names.emplace_back(arg->token().name());
         }
