@@ -59,15 +59,32 @@ DefineExpression::DefineExpression(const ParseTreePointer &parse_tree) {
     auto& args = parse_tree->children();
     assert(args.size() == 3);
     assert(args[0]->token().name() == "define");
-    assert(args[1]->token().type() == TOKEN_ID);
 
-    name_ = args[1]->token().name();
+    if (args[1]->isCompound()) {
+        auto& def = args[1]->children();
+        assert(def[0]->token().type() == TOKEN_ID);
+        name_ = def[0]->token().name();
+
+        for (size_t i = 1; i < def.size(); i++) {
+            assert(def[i]->token().type() == TOKEN_ID);
+            arg_names_.emplace_back(def[i]->token().name());
+        }
+
+    } else {
+        assert(args[1]->token().type() == TOKEN_ID);
+        name_ = args[1]->token().name(); 
+
+    }
+
     expr_ = std::shared_ptr<Expression>(new ValueExpression(args[2]));
 }
 
 Value DefineExpression::eval(const EnvironmentPtr &env) const {
-    Value value = expr_->eval(env);
-    env->define(name_, value);
+    if (arg_names_.empty()) {
+        env->define(name_, expr_->eval(env));
+    } else {
+        env->define(name_, SelfDefinedProcedure::create(expr_, arg_names_));
+    }
     return Value();
 }
 

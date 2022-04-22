@@ -70,14 +70,15 @@ private:
 
 class DefineExpression : public Expression {
 public:
-    DefineExpression(std::string name, ExpressionPtr expr):
-        name_{name}, expr_{expr} {}
+    DefineExpression(std::string name, ExpressionPtr expr, const std::vector<std::string> &arg_names = {}):
+        name_{name}, arg_names_{arg_names}, expr_{expr} {}
 
     DefineExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
 
 private:
     std::string name_;
+    std::vector<std::string> arg_names_;
     ExpressionPtr expr_;
 };
 
