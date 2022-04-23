@@ -10,18 +10,18 @@ ExpressionPtr Expression::create(const ParseTreePointer &parse_tree, const Envir
 
         if (!children[0]->isCompound()) {
             if (children[0]->token().name() == "define") {
-                return std::make_shared<DefineExpression>(parse_tree);
+                return std::make_shared<DefineExpression>(parse_tree, env);
             } else if (children[0]->token().name() == "lambda") {
-                return std::make_shared<ValueExpression>(parse_tree);
+                return std::make_shared<ValueExpression>(parse_tree, env);
             }
         }
-        return std::make_shared<ApplyExpression>(parse_tree);
+        return std::make_shared<ApplyExpression>(parse_tree, env);
 
     } else {
         if (parse_tree->token().type() == TOKEN_ID) {
-            return std::make_shared<VariableExpression>(parse_tree);
+            return std::make_shared<VariableExpression>(parse_tree, env);
         } else {
-            return std::make_shared<ValueExpression>(parse_tree);
+            return std::make_shared<ValueExpression>(parse_tree, env);
         }
     }
 }
@@ -51,6 +51,8 @@ const Construct Value::cons() const {
 }
 
 ValueExpression::ValueExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env) {
+    this->env_ = env;
+
     if (!parse_tree->isCompound()) {
         Token token = parse_tree->token();
         if (token.type() == TOKEN_QUOTE) {
@@ -76,15 +78,17 @@ Value ValueExpression::parse_lambda(const ParseTreePointer &parse_tree) {
         names.emplace_back(arg->token().name());
     }
 
-    auto expr = Expression::create(children[2]);
+    auto expr = Expression::create(children[2], this->env_);
     return Value(SelfDefinedProcedure::create(expr, names));
 }
 
-Value ValueExpression::eval(const EnvironmentPtr &env) const {
+Value ValueExpression::eval() const {
     return value_;
 }
 
 DefineExpression::DefineExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env) {
+    this->env_ = env;
+
     assert(parse_tree->isCompound());
     auto& children = parse_tree->children();
     assert(children.size() == 3);
@@ -106,19 +110,21 @@ DefineExpression::DefineExpression(const ParseTreePointer &parse_tree, const Env
 
     }
 
-    expr_ = Expression::create(children[2]);
+    expr_ = Expression::create(children[2], env);
 }
 
-Value DefineExpression::eval(const EnvironmentPtr &env) const {
+Value DefineExpression::eval() const {
     if (arg_names_.empty()) {
-        env->define(name_, expr_->eval(env));
+        this->env_->define(name_, expr_->eval());
     } else {
-        env->define(name_, SelfDefinedProcedure::create(expr_, arg_names_));
+        this->env_->define(name_, SelfDefinedProcedure::create(expr_, arg_names_));
     }
     return Value();
 }
 
 VariableExpression::VariableExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env) {
+    this->env_ = env;
+
     assert(!parse_tree->isCompound());
     assert(parse_tree->token().type() == TOKEN_ID);
 
@@ -129,22 +135,24 @@ const std::string VariableExpression::name() const {
     return name_;
 }
 
-Value VariableExpression::eval(const EnvironmentPtr &env) const {
-    return env->get(name_);
+Value VariableExpression::eval() const {
+    return this->env_->get(name_);
 }
 
 ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env) {
+    this->env_ = env;
+    
     assert(parse_tree->isCompound());
     auto children = parse_tree->children();
     assert(children.size() > 0);
 
-    function_ = Expression::create(children[0]);
+    function_ = Expression::create(children[0], this->env_);
 
     for (size_t i = 1; i < children.size(); i++) {
-        args_.emplace_back(Expression::create(children[i]));
+        args_.emplace_back(Expression::create(children[i], this->env_));
     }
 }
 
-Value ApplyExpression::eval(const EnvironmentPtr &env) const {
-    return function_->eval(env).procedure()->call(env, args_);
+Value ApplyExpression::eval() const {
+    return function_->eval().procedure()->call(this->env_, args_);
 }

@@ -24,11 +24,11 @@ protected:
     }
 
     auto expr(std::string str) {
-        return Expression::create((read(str), parser_.next()));
+        return Expression::create((read(str), parser_.next()), env_);
     }
 
     auto eval(std::string str) {
-        return expr(str)->eval(env_);
+        return expr(str)->eval();
     }
 };
 
