@@ -30,9 +30,20 @@ class Expression {
 public:
     virtual Value eval() const = 0;
     static ExpressionPtr create(const ParseTreePointer &parse_tree, const EnvironmentPtr &env);
+    static ExpressionPtr create(const ExpressionPtr &expr, const EnvironmentPtr &env);
+
+    auto& environment() {
+        return env_;
+    }
 
 protected:
     EnvironmentPtr env_;
+    enum {
+        EXPR_VALUE,
+        EXPR_APPLY,
+        EXPR_DEFINE,
+        EXPR_VAR,
+    } type_;
 };
 
 typedef int Num;
@@ -69,6 +80,7 @@ class ValueExpression : public Expression {
 public:
     ValueExpression(Value value, const EnvironmentPtr &env): value_(value) {
         this->env_ = env;
+        this->type_ = EXPR_VALUE;
     }
 
     ValueExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env);
@@ -86,6 +98,7 @@ public:
         name_{name}, arg_names_{arg_names}, expr_{expr} 
     {
         this->env_ = env;
+        this->type_ = EXPR_DEFINE;
     }
 
     DefineExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env);
@@ -101,6 +114,7 @@ class VariableExpression : public Expression {
 public:
     VariableExpression(std::string name, const EnvironmentPtr &env): name_{name} {
         this->env_ = env;
+        this->type_ = EXPR_VAR;
     }
 
     VariableExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env);
@@ -117,6 +131,7 @@ public:
         function_{function}, args_{args} 
     {
         this->env_ = env;
+        this->type_ = EXPR_APPLY;
     }
 
     ApplyExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env);

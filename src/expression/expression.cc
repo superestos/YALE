@@ -26,6 +26,28 @@ ExpressionPtr Expression::create(const ParseTreePointer &parse_tree, const Envir
     }
 }
 
+ExpressionPtr Expression::create(const ExpressionPtr &expr, const EnvironmentPtr &env) {
+    ExpressionPtr result;
+
+    if (expr->type_ == EXPR_VALUE) {
+        auto ptr = reinterpret_cast<ValueExpression*>(expr.get());
+        result = std::make_shared<ValueExpression>(*ptr);
+    } else if (expr->type_ == EXPR_APPLY) {
+        auto ptr = reinterpret_cast<ApplyExpression*>(expr.get());
+        result = std::make_shared<ApplyExpression>(*ptr);
+    } else if (expr->type_ == EXPR_DEFINE) {
+        auto ptr = reinterpret_cast<DefineExpression*>(expr.get());
+        result = std::make_shared<DefineExpression>(*ptr);
+    } else if (expr->type_ == EXPR_VAR) {
+        auto ptr = reinterpret_cast<VariableExpression*>(expr.get());
+        result = std::make_shared<VariableExpression>(*ptr);
+    }
+
+    assert(result.get() != nullptr);
+    result->env_ = env;
+    return result;
+}
+
 ValueType Value::type() const {
     return type_;
 }
@@ -52,6 +74,7 @@ const Construct Value::cons() const {
 
 ValueExpression::ValueExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env) {
     this->env_ = env;
+    this->type_ = EXPR_VALUE;
 
     if (!parse_tree->isCompound()) {
         Token token = parse_tree->token();
@@ -88,6 +111,7 @@ Value ValueExpression::eval() const {
 
 DefineExpression::DefineExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env) {
     this->env_ = env;
+    this->type_ = EXPR_DEFINE;
 
     assert(parse_tree->isCompound());
     auto& children = parse_tree->children();
@@ -124,6 +148,7 @@ Value DefineExpression::eval() const {
 
 VariableExpression::VariableExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env) {
     this->env_ = env;
+    this->type_ = EXPR_VAR;
 
     assert(!parse_tree->isCompound());
     assert(parse_tree->token().type() == TOKEN_ID);
@@ -141,7 +166,8 @@ Value VariableExpression::eval() const {
 
 ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env) {
     this->env_ = env;
-    
+    this->type_ = EXPR_APPLY;
+
     assert(parse_tree->isCompound());
     auto children = parse_tree->children();
     assert(children.size() > 0);

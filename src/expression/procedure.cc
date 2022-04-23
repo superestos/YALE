@@ -105,13 +105,18 @@ Value CdrProcedure::call(const EnvironmentPtr &env, const std::vector<Expression
 
 Value SelfDefinedProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
     assert(args.size() == names_.size());
-    EnvironmentPtr new_env = EnvironmentManager::create(env);
+    //EnvironmentPtr new_env = EnvironmentManager::create(env);
+
+    auto new_env = EnvironmentManager::create(expr_->environment());
+    auto new_expr = Expression::create(expr_, new_env);
 
     for (size_t i = 0; i < names_.size(); i++) {
         new_env->define(names_[i], args[i]->eval());
     }
 
+    return new_expr->eval();
+
     // TODO: create new environment
     //return expr_->eval(new_env);  
-    return expr_->eval();  
+    //return expr_->eval();  
 }
