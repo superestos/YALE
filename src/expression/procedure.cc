@@ -66,6 +66,21 @@ Value IfProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionP
     return cond.num() != 0? args[1]->eval(env): args[2]->eval(env);
 }
 
+Value BeginProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+    Value value;
+    for (auto &arg: args) {
+        value = arg->eval(env);
+    }
+    return value;
+}
+
+Value SetProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+    assert(args.size() == 2);
+    std::string name = reinterpret_cast<VariableExpression*>(args[0].get())->name();
+    env->set(name, args[1]->eval(env));
+    return Value();
+}
+
 Value ConsProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
     assert(args.size() == 2);
     return Value({std::make_shared<Value>(args[0]->eval(env)), std::make_shared<Value>(args[1]->eval(env))});

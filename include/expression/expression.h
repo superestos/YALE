@@ -96,6 +96,7 @@ public:
 
     VariableExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
+    const std::string name() const;
 
 private:
     std::string name_;

@@ -42,6 +42,16 @@ public:
     Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 };
 
+class BeginProcedure : public Procedure {
+public:
+    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
+};
+
+class SetProcedure : public Procedure {
+public:
+    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
+};
+
 class ConsProcedure : public Procedure {
 public:
     Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;

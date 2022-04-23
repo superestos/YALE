@@ -125,6 +125,10 @@ VariableExpression::VariableExpression(const ParseTreePointer &parse_tree) {
     name_ = parse_tree->token().name();
 }
 
+const std::string VariableExpression::name() const {
+    return name_;
+}
+
 Value VariableExpression::eval(const EnvironmentPtr &env) const {
     return env->get(name_);
 }

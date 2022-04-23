@@ -60,7 +60,30 @@ TEST_F(ProcedureTest, Condition) {
     EXPECT_EQ(cond.call(env_, {expr("(< 3 2)"), expr("2"), expr("3")}).num(), 3);
 }
 
-TEST_F(ProcedureTest, Construct) {
+TEST_F(ProcedureTest, Begin) {
+    env_->define("begin", Value(Procedure::create<BeginProcedure>()));
+
+    EXPECT_EQ(eval("(begin)").type(), VALUE_VOID);
+    EXPECT_EQ(eval("(begin 1)").num(), 1);
+    EXPECT_EQ(eval("(begin 1 2)").num(), 2);
+    EXPECT_EQ(eval("(begin 1 2 '3rd)").quote(), "3rd");
+}
+
+TEST_F(ProcedureTest, Set) {
+    env_->define("set!", Value(Procedure::create<SetProcedure>()));
+    env_->define("+", Value(Procedure::create<AddProcedure>()));
+    
+    eval("(define x 0)");
+    EXPECT_EQ(env_->get("x").num(), 0);
+
+    EXPECT_EQ(eval("(set! x 4)").type(), VALUE_VOID);
+    EXPECT_EQ(env_->get("x").num(), 4);
+
+    EXPECT_EQ(eval("(set! x (+ x 1))").type(), VALUE_VOID);
+    EXPECT_EQ(env_->get("x").num(), 5);
+}
+
+TEST_F(ProcedureTest, Cons) {
     env_->define("cons", Value(Procedure::create<ConsProcedure>()));
     env_->define("car", Value(Procedure::create<CarProcedure>()));
     env_->define("cdr", Value(Procedure::create<CdrProcedure>()));
