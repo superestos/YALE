@@ -157,11 +157,6 @@ TEST_F(ExpressionTest, LambdaExpressionMultiVariable) {
 
     EXPECT_EQ(isinstance<ApplyExpression>(expr("(add 3 2)").get()), true);
     EXPECT_EQ(eval("(add 3 2)").num(), 5);
-
-    EXPECT_EQ(isinstance<ApplyExpression>(expr("(add 1)").get()), true);
-    EXPECT_EQ(expr("(add 1)")->eval(env_).type(), VALUE_PROCEDURE);
-    eval("(define inc (add 1))");
-    EXPECT_EQ(eval("(inc 42)").num(), 43);
 }
 
 TEST(ValueTest, BasicValue) {
