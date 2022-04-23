@@ -29,7 +29,10 @@ typedef std::shared_ptr<Expression> ExpressionPtr;
 class Expression {
 public:
     virtual Value eval(const EnvironmentPtr &env) const = 0;
-    static ExpressionPtr create(const ParseTreePointer &parse_tree);
+    static ExpressionPtr create(const ParseTreePointer &parse_tree, const EnvironmentPtr &env = {});
+
+protected:
+    EnvironmentPtr env_;
 };
 
 typedef int Num;
@@ -64,9 +67,9 @@ private:
 
 class ValueExpression : public Expression {
 public:
-    ValueExpression(Value value): value_(value) {}
+    ValueExpression(Value value, const EnvironmentPtr &env = {}): value_(value) {}
 
-    ValueExpression(const ParseTreePointer &parse_tree);
+    ValueExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env = {});
     Value eval(const EnvironmentPtr &env) const;
 
 private:
@@ -77,10 +80,10 @@ private:
 
 class DefineExpression : public Expression {
 public:
-    DefineExpression(std::string name, ExpressionPtr expr, const std::vector<std::string> &arg_names = {}):
+    DefineExpression(std::string name, ExpressionPtr expr, const std::vector<std::string> &arg_names = {}, const EnvironmentPtr &env = {}):
         name_{name}, arg_names_{arg_names}, expr_{expr} {}
 
-    DefineExpression(const ParseTreePointer &parse_tree);
+    DefineExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env = {});
     Value eval(const EnvironmentPtr &env) const;
 
 private:
@@ -91,10 +94,10 @@ private:
 
 class VariableExpression : public Expression {
 public:
-    VariableExpression(std::string name):
+    VariableExpression(std::string name, const EnvironmentPtr &env = {}):
         name_{name} {}
 
-    VariableExpression(const ParseTreePointer &parse_tree);
+    VariableExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env = {});
     Value eval(const EnvironmentPtr &env) const;
     const std::string name() const;
 
@@ -104,10 +107,10 @@ private:
 
 class ApplyExpression : public Expression {
 public:
-    ApplyExpression(const ExpressionPtr &function, const std::vector<ExpressionPtr> &args):
+    ApplyExpression(const ExpressionPtr &function, const std::vector<ExpressionPtr> &args, const EnvironmentPtr &env = {}):
         function_{function}, args_{args} {}
 
-    ApplyExpression(const ParseTreePointer &parse_tree);
+    ApplyExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env = {});
     Value eval(const EnvironmentPtr &env) const;
 
 private:

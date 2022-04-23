@@ -3,7 +3,7 @@
 #include "expression/procedure.h"
 #include "environment/environment.h"
 
-ExpressionPtr Expression::create(const ParseTreePointer &parse_tree) {
+ExpressionPtr Expression::create(const ParseTreePointer &parse_tree, const EnvironmentPtr &env) {
     if (parse_tree->isCompound()) {
         assert(parse_tree->children().size() > 0);
         auto &children = parse_tree->children();
@@ -50,7 +50,7 @@ const Construct Value::cons() const {
     return cons_;
 }
 
-ValueExpression::ValueExpression(const ParseTreePointer &parse_tree) {
+ValueExpression::ValueExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env) {
     if (!parse_tree->isCompound()) {
         Token token = parse_tree->token();
         if (token.type() == TOKEN_QUOTE) {
@@ -84,7 +84,7 @@ Value ValueExpression::eval(const EnvironmentPtr &env) const {
     return value_;
 }
 
-DefineExpression::DefineExpression(const ParseTreePointer &parse_tree) {
+DefineExpression::DefineExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env) {
     assert(parse_tree->isCompound());
     auto& children = parse_tree->children();
     assert(children.size() == 3);
@@ -118,7 +118,7 @@ Value DefineExpression::eval(const EnvironmentPtr &env) const {
     return Value();
 }
 
-VariableExpression::VariableExpression(const ParseTreePointer &parse_tree) {
+VariableExpression::VariableExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env) {
     assert(!parse_tree->isCompound());
     assert(parse_tree->token().type() == TOKEN_ID);
 
@@ -133,7 +133,7 @@ Value VariableExpression::eval(const EnvironmentPtr &env) const {
     return env->get(name_);
 }
 
-ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree) {
+ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree, const EnvironmentPtr &env) {
     assert(parse_tree->isCompound());
     auto children = parse_tree->children();
     assert(children.size() > 0);
