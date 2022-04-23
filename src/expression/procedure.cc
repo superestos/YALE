@@ -76,7 +76,10 @@ Value BeginProcedure::call(const EnvironmentPtr &env, const std::vector<Expressi
 
 Value SetProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
     assert(args.size() == 2);
-    std::string name = reinterpret_cast<VariableExpression*>(args[0].get())->name();
+    auto var = reinterpret_cast<VariableExpression*>(args[0].get());
+    assert(var != nullptr);
+
+    std::string name = var->name();
     env->set(name, args[1]->eval(env));
     return Value();
 }

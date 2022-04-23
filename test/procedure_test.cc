@@ -72,7 +72,7 @@ TEST_F(ProcedureTest, Begin) {
 TEST_F(ProcedureTest, Set) {
     env_->define("set!", Value(Procedure::create<SetProcedure>()));
     env_->define("+", Value(Procedure::create<AddProcedure>()));
-    
+
     eval("(define x 0)");
     EXPECT_EQ(env_->get("x").num(), 0);
 
@@ -110,7 +110,6 @@ TEST_F(ProcedureTest, SelfDefinedIncrease) {
     EXPECT_EQ(func.call(env_, {expr("-42")}).num(), -41);
 }
 
-
 TEST_F(ProcedureTest, SelfDefinedFib) {
     auto fib_expr = expr("(if (< x 2) 1 (+ (fib (+ x -1)) (fib (+ x -2))))");
 
@@ -129,4 +128,16 @@ TEST_F(ProcedureTest, SelfDefinedFib) {
     EXPECT_EQ(fib_func->call(env_, {expr("7")}).num(), 21);
     EXPECT_EQ(fib_func->call(env_, {expr("8")}).num(), 34);
     EXPECT_EQ(fib_func->call(env_, {expr("9")}).num(), 55);
+}
+
+TEST_F(ProcedureTest, SelfDefinedAcc) {
+    env_->define("set!", Value(Procedure::create<SetProcedure>()));
+    env_->define("+", Value(Procedure::create<AddProcedure>()));
+    env_->define("begin", Value(Procedure::create<BeginProcedure>()));
+
+    eval("(define (acc balance) (lambda (amount) (begin (set! balance (+ balance amount)) balance)))");
+    EXPECT_EQ(eval("(acc 10)").type(), VALUE_PROCEDURE);
+
+    eval("(define a1 (acc 10))");
+    EXPECT_EQ(eval("(a1 0)").num(), 10);
 }
