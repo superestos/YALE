@@ -113,7 +113,7 @@ Value DefineExpression::eval(const EnvironmentPtr &env) const {
     if (arg_names_.empty()) {
         env->define(name_, expr_->eval(env));
     } else {
-        env->define(name_, SelfDefinedProcedure::create(expr_, arg_names_));
+        env->define(name_, Value(SelfDefinedProcedure::create(expr_, arg_names_), env));
     }
     return Value();
 }

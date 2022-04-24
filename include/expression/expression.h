@@ -44,7 +44,7 @@ public:
 
     Value(Quote value): type_{VALUE_QUOTE}, quote_{value} {}
 
-    Value(ProcedurePtr value): type_{VALUE_PROCEDURE}, procedure_{value} {}
+    Value(ProcedurePtr value, EnvironmentPtr env = {}): type_{VALUE_PROCEDURE}, procedure_{value}, env_{env} {}
 
     Value(Construct cons): type_{VALUE_CONSTRUCT}, cons_{cons} {}
 
@@ -54,11 +54,16 @@ public:
     const ProcedurePtr procedure() const;
     const Construct cons() const;
 
+    EnvironmentPtr env_;
+
 private:
     ValueType type_;
     Num num_;
     Quote quote_;
+
     ProcedurePtr procedure_;
+    
+
     Construct cons_;
 };
 

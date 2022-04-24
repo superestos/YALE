@@ -111,5 +111,10 @@ Value SelfDefinedProcedure::call(const EnvironmentPtr &env, const std::vector<Ex
         new_env->define(names_[i], args[i]->eval(env));
     }
 
-    return expr_->eval(new_env);    
+    Value value = expr_->eval(new_env);
+    if (value.type() == VALUE_PROCEDURE) {
+        value.env_ = new_env;
+    }
+
+    return value;
 }
