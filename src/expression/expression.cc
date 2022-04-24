@@ -146,5 +146,12 @@ ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree) {
 }
 
 Value ApplyExpression::eval(const EnvironmentPtr &env) const {
-    return function_->eval(env).procedure()->call(env, args_);
+    Value value = function_->eval(env);
+    assert(value.type() == VALUE_PROCEDURE);
+    if (value.env_.get() == nullptr) {
+        return value.procedure()->call(env, args_);
+    } else {
+        value.env_->enclosing_ = env;
+        return value.procedure()->call(value.env_, args_);
+    }
 }

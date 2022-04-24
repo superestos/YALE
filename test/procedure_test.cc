@@ -138,9 +138,9 @@ TEST_F(ProcedureTest, SelfDefinedAcc) {
     eval("(define (acc balance) (lambda (amount) (begin (set! balance (+ balance amount)) balance)))");
     EXPECT_EQ(eval("(acc 10)").type(), VALUE_PROCEDURE);
 
-    EXPECT_EQ(eval("(acc 10").env_->existed("balance"), true);
+    EXPECT_EQ(eval("(acc 10)").env_->existed("balance"), true);
 
-    //eval("(define a1 (acc 10))");
+    eval("(define a1 (acc 10))");
 
     /*
     auto new_env = EnvironmentManager::create(env_);
@@ -151,5 +151,7 @@ TEST_F(ProcedureTest, SelfDefinedAcc) {
     EXPECT_EQ(expr("(a1 20)")->eval(new_env).num(), 40);
     */
 
-    //EXPECT_EQ(eval("(a1 0)").num(), 10);
+    EXPECT_EQ(eval("(a1 0)").num(), 10);
+    EXPECT_EQ(eval("(a1 10)").num(), 20);
+    EXPECT_EQ(eval("(a1 20)").num(), 40);
 }

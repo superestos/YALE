@@ -35,6 +35,8 @@ public:
         return local_existed(name) || (enclosing_.get() != nullptr && enclosing_->existed(name));
     }
 
+    EnvironmentPtr enclosing_;
+
 private:
     bool local_existed(const std::string &name) {
         return map_.count(name) > 0;
@@ -45,7 +47,7 @@ private:
     Environment() {}
 
     std::map<std::string, Value> map_;
-    EnvironmentPtr enclosing_;
+    
 };
 
 class EnvironmentManager {
