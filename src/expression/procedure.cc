@@ -113,7 +113,7 @@ Value SelfDefinedProcedure::call(const EnvironmentPtr &env, const std::vector<Ex
 
     Value value = expr_->eval(new_env);
     if (value.type() == VALUE_PROCEDURE) {
-        value.env_ = new_env;
+        return Value(value.procedure(), new_env);
     }
 
     return value;

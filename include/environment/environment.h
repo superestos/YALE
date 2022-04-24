@@ -22,23 +22,25 @@ public:
         }
     }
 
-    const Value& get(const std::string &name) {
+    const Value& get(const std::string &name) const {
         if (local_existed(name)) {
-            return map_[name];
+            return map_.at(name);
         } else if (enclosing_.get() != nullptr) {
             return enclosing_->get(name);
         }
         assert(false);
     }
 
-    bool existed(const std::string &name) {
+    bool existed(const std::string &name) const {
         return local_existed(name) || (enclosing_.get() != nullptr && enclosing_->existed(name));
     }
 
-    EnvironmentPtr enclosing_;
+    void set_enclosing(const EnvironmentPtr &enclosing) {
+        enclosing_ = enclosing;
+    }
 
 private:
-    bool local_existed(const std::string &name) {
+    bool local_existed(const std::string &name) const {
         return map_.count(name) > 0;
     }
 
@@ -47,6 +49,8 @@ private:
     Environment() {}
 
     std::map<std::string, Value> map_;
+
+    EnvironmentPtr enclosing_;
     
 };
 

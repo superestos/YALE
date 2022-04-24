@@ -53,8 +53,7 @@ public:
     const Quote& quote() const;
     const ProcedurePtr procedure() const;
     const Construct cons() const;
-
-    EnvironmentPtr env_;
+    const EnvironmentPtr env() const;    
 
 private:
     ValueType type_;
@@ -62,7 +61,7 @@ private:
     Quote quote_;
 
     ProcedurePtr procedure_;
-    
+    EnvironmentPtr env_;
 
     Construct cons_;
 };

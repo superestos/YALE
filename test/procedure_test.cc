@@ -138,7 +138,7 @@ TEST_F(ProcedureTest, SelfDefinedAcc) {
     eval("(define (acc balance) (lambda (amount) (begin (set! balance (+ balance amount)) balance)))");
     EXPECT_EQ(eval("(acc 10)").type(), VALUE_PROCEDURE);
 
-    EXPECT_EQ(eval("(acc 10)").env_->existed("balance"), true);
+    EXPECT_EQ(eval("(acc 10)").env()->existed("balance"), true);
 
     eval("(define a1 (acc 10))");
 

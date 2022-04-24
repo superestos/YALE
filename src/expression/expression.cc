@@ -45,6 +45,11 @@ const ProcedurePtr Value::procedure() const {
     return procedure_;
 }
 
+const EnvironmentPtr Value::env() const {
+    assert(type() == VALUE_PROCEDURE);
+    return env_;
+}
+
 const Construct Value::cons() const {
     assert(type() == VALUE_CONSTRUCT);
     return cons_;
@@ -148,10 +153,10 @@ ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree) {
 Value ApplyExpression::eval(const EnvironmentPtr &env) const {
     Value value = function_->eval(env);
     assert(value.type() == VALUE_PROCEDURE);
-    if (value.env_.get() == nullptr) {
+    if (value.env().get() == nullptr) {
         return value.procedure()->call(env, args_);
     } else {
-        value.env_->enclosing_ = env;
-        return value.procedure()->call(value.env_, args_);
+        value.env()->set_enclosing(env);
+        return value.procedure()->call(value.env(), args_);
     }
 }
