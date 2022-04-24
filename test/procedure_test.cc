@@ -142,16 +142,13 @@ TEST_F(ProcedureTest, SelfDefinedAcc) {
 
     eval("(define a1 (acc 10))");
 
-    /*
-    auto new_env = EnvironmentManager::create(env_);
-    new_env->define("balance", Value(10));
-
-    EXPECT_EQ(expr("(a1 0)")->eval(new_env).num(), 10);
-    EXPECT_EQ(expr("(a1 10)")->eval(new_env).num(), 20);
-    EXPECT_EQ(expr("(a1 20)")->eval(new_env).num(), 40);
-    */
-
     EXPECT_EQ(eval("(a1 0)").num(), 10);
     EXPECT_EQ(eval("(a1 10)").num(), 20);
     EXPECT_EQ(eval("(a1 20)").num(), 40);
+
+    eval("(define a2 (acc 20))");
+    EXPECT_EQ(eval("(a2 10)").num(), 30);
+    EXPECT_EQ(eval("(a2 20)").num(), 50);
+
+    EXPECT_EQ(eval("(a1 20)").num(), 60);
 }
