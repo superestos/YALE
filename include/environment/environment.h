@@ -14,8 +14,12 @@ public:
     }
 
     void set(const std::string &name, Value value) {
-        assert(local_existed(name));
-        map_[name] = value;
+        assert(existed(name));
+        if (local_existed(name)) {
+            map_[name] = value;
+        } else if (enclosing_.get() != nullptr) {
+            enclosing_->set(name, value);
+        }
     }
 
     const Value& get(const std::string &name) {
