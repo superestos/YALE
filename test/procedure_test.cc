@@ -8,7 +8,7 @@
 
 class ProcedureTest : public ::testing::Test {
 protected:
-    EnvironmentManager manager_;
+    EnvironmentManager manager_{ENV_BUILTIN};
     EnvironmentPtr env_{manager_.global()};
 
     std::stringstream input_;
@@ -55,14 +55,11 @@ TEST_F(ProcedureTest, Condition) {
     EXPECT_EQ(cond.call(env_, {expr("1"), expr("2"), expr("3")}).num(), 2);
     EXPECT_EQ(cond.call(env_, {expr("0"), expr("2"), expr("3")}).num(), 3);
 
-    env_->define("<", Value(Procedure::create<SmallProcedure>()));
     EXPECT_EQ(cond.call(env_, {expr("(< 1 2)"), expr("2"), expr("3")}).num(), 2);
     EXPECT_EQ(cond.call(env_, {expr("(< 3 2)"), expr("2"), expr("3")}).num(), 3);
 }
 
 TEST_F(ProcedureTest, Begin) {
-    env_->define("begin", Value(Procedure::create<BeginProcedure>()));
-
     EXPECT_EQ(eval("(begin)").type(), VALUE_VOID);
     EXPECT_EQ(eval("(begin 1)").num(), 1);
     EXPECT_EQ(eval("(begin 1 2)").num(), 2);
@@ -70,9 +67,6 @@ TEST_F(ProcedureTest, Begin) {
 }
 
 TEST_F(ProcedureTest, Set) {
-    env_->define("set!", Value(Procedure::create<SetProcedure>()));
-    env_->define("+", Value(Procedure::create<AddProcedure>()));
-
     eval("(define x 0)");
     EXPECT_EQ(env_->get("x").num(), 0);
 
@@ -84,22 +78,12 @@ TEST_F(ProcedureTest, Set) {
 }
 
 TEST_F(ProcedureTest, Cons) {
-    env_->define("cons", Value(Procedure::create<ConsProcedure>()));
-    env_->define("car", Value(Procedure::create<CarProcedure>()));
-    env_->define("cdr", Value(Procedure::create<CdrProcedure>()));
-
     eval("(define x (cons 1 2))");
     EXPECT_EQ(eval("(car x)").num(), 1);
     EXPECT_EQ(eval("(cdr x)").num(), 2);
 }
 
 TEST_F(ProcedureTest, List) {
-    env_->define("cons", Value(Procedure::create<ConsProcedure>()));
-    env_->define("car", Value(Procedure::create<CarProcedure>()));
-    env_->define("cdr", Value(Procedure::create<CdrProcedure>()));
-    env_->define("null?", Value(Procedure::create<NullProcedure>()));
-    env_->define("list", Value(Procedure::create<ListProcedure>()));
-
     eval("(define a (list))");
     EXPECT_EQ(eval("(null? a)").num(), 1);
 
@@ -128,7 +112,6 @@ TEST_F(ProcedureTest, DefinedIdentity) {
 TEST_F(ProcedureTest, DefinedIncrease) {
     auto inc = expr("(+ x 1)");
     LambdaProcedure func(inc, {"x"});
-    env_->define("+", Value(Procedure::create<AddProcedure>()));
 
     EXPECT_EQ(func.call(env_, {expr("42")}).num(), 43);
     EXPECT_EQ(func.call(env_, {expr("-42")}).num(), -41);
@@ -139,9 +122,6 @@ TEST_F(ProcedureTest, DefinedFib) {
 
     ProcedurePtr fib_func = Procedure::create(fib_expr, {"x"});
     env_->define("fib", Value(fib_func));
-    env_->define("+", Value(Procedure::create<AddProcedure>()));
-    env_->define("<", Value(Procedure::create<SmallProcedure>()));
-    env_->define("if", Value(Procedure::create<IfProcedure>()));
 
     EXPECT_EQ(fib_func->call(env_, {expr("1")}).num(), 1);
     EXPECT_EQ(fib_func->call(env_, {expr("2")}).num(), 2);
@@ -155,10 +135,6 @@ TEST_F(ProcedureTest, DefinedFib) {
 }
 
 TEST_F(ProcedureTest, DefinedAcc) {
-    env_->define("set!", Value(Procedure::create<SetProcedure>()));
-    env_->define("+", Value(Procedure::create<AddProcedure>()));
-    env_->define("begin", Value(Procedure::create<BeginProcedure>()));
-
     eval("(define (acc balance) (lambda (amount) (begin (set! balance (+ balance amount)) balance)))");
     EXPECT_EQ(eval("(acc 10)").type(), VALUE_PROCEDURE);
 
