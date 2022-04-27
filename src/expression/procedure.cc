@@ -6,7 +6,7 @@ ProcedurePtr SelfDefinedProcedure::create(ExpressionPtr expr, const std::vector<
     return std::shared_ptr<Procedure>(new SelfDefinedProcedure(expr, names));
 }
 
-std::pair<Value, Value> BinaryOperator::eval_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+std::pair<Value, Value> Procedure::eval_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
     assert(args.size() == 2);
     std::pair<Value, Value> pair = {args[0]->eval(env), args[1]->eval(env)};
     assert(pair.first.type() == pair.second.type());

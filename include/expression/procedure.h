@@ -13,59 +13,28 @@ public:
     static ProcedurePtr create() {
         return std::shared_ptr<Procedure>(new T());
     }
-};
 
-class BinaryOperator : public Procedure {
-public:
-    virtual Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const = 0;
 protected:
     std::pair<Value, Value> eval_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 };
 
-class AddProcedure : public BinaryOperator {
-public:
-    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
+
+#define concat(x, y) x ## y
+#define def_procedure_class(name) \
+class concat(name, Procedure) : public Procedure { \
+public: \
+    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const; \
 };
 
-class EqualProcedure : public BinaryOperator {
-public:
-    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
-};
-
-class SmallProcedure : public BinaryOperator {
-public:
-    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
-};
-
-class IfProcedure : public Procedure {
-public:
-    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
-};
-
-class BeginProcedure : public Procedure {
-public:
-    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
-};
-
-class SetProcedure : public Procedure {
-public:
-    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
-};
-
-class ConsProcedure : public Procedure {
-public:
-    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
-};
-
-class CarProcedure : public Procedure {
-public:
-    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
-};
-
-class CdrProcedure : public Procedure {
-public:
-    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
-};
+def_procedure_class(Add)
+def_procedure_class(Equal)
+def_procedure_class(Small)
+def_procedure_class(If)
+def_procedure_class(Begin)
+def_procedure_class(Set)
+def_procedure_class(Cons)
+def_procedure_class(Car)
+def_procedure_class(Cdr)
 
 class SelfDefinedProcedure : public Procedure {
 public:
