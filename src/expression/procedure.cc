@@ -6,26 +6,36 @@ ProcedurePtr Procedure::create(ExpressionPtr expr, const std::vector<std::string
     return std::shared_ptr<Procedure>(new LambdaProcedure(expr, names));
 }
 
-std::pair<Value, Value> Procedure::eval_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+std::pair<Value, Value> Procedure::eval_binary_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
     assert(args.size() == 2);
     std::pair<Value, Value> pair = {args[0]->eval(env), args[1]->eval(env)};
     assert(pair.first.type() == pair.second.type());
     return pair;
 }
 
+std::vector<Value> Procedure::eval_variant_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+    std::vector<Value> result;
+    for (auto& arg: args) {
+        result.emplace_back(arg->eval(env));
+    }
+    return result;
+}
+
 #define def_procedure_call(name) Value concat(name, Procedure)::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const
 
 def_procedure_call(Add) {
-    Value left, right;
-    std::tie(left, right) = this->eval_args(env, args);
-    assert(left.type() == VALUE_NUM);
-    return Value(left.num() + right.num());
+    auto nums = this->eval_variant_args(env, args);
+    Num sum = 0;
+    for (auto &n: nums) {
+        assert(n.type() == VALUE_NUM);
+        sum += n.num();
+    }
+    return Value(sum);
 }
 
 def_procedure_call(Equal) {
-    assert(args.size() == 2);
-    Value left = args[0]->eval(env);
-    Value right = args[1]->eval(env);
+    Value left, right;
+    std::tie(left, right) = this->eval_binary_args(env, args);
     assert(left.type() == right.type());
 
     if (left.type() == VALUE_NUM) {
@@ -46,9 +56,8 @@ def_procedure_call(Equal) {
 }
 
 def_procedure_call(Small) {
-    assert(args.size() == 2);
-    Value left = args[0]->eval(env);
-    Value right = args[1]->eval(env);
+    Value left, right;
+    std::tie(left, right) = this->eval_binary_args(env, args);
     assert(left.type() == right.type());
 
     if (left.num() < right.num()) {
@@ -69,11 +78,7 @@ def_procedure_call(If) {
 }
 
 def_procedure_call(Begin) {
-    Value value;
-    for (auto &arg: args) {
-        value = arg->eval(env);
-    }
-    return value;
+    return args.empty()? Value(): this->eval_variant_args(env, args)[args.size() - 1];
 }
 
 def_procedure_call(Set) {

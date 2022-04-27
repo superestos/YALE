@@ -17,7 +17,8 @@ public:
     static ProcedurePtr create(ExpressionPtr expr, const std::vector<std::string>& names);
 
 protected:
-    std::pair<Value, Value> eval_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
+    std::pair<Value, Value> eval_binary_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
+    std::vector<Value> eval_variant_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 };
 
 class LambdaProcedure : public Procedure {
@@ -48,5 +49,6 @@ def_procedure_class(If)
 def_procedure_class(Begin)
 def_procedure_class(Set)
 def_procedure_class(Cons)
+//def_procedure_class(List)
 def_procedure_class(Car)
 def_procedure_class(Cdr)
