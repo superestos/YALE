@@ -68,6 +68,7 @@ TEST(TokenTest, TokenType) {
     ASSERT_EQ(Token("define").type(), TOKEN_DEFINE);
     ASSERT_EQ(Token("let").type(), TOKEN_LET);
     ASSERT_EQ(Token("lambda").type(), TOKEN_LAMBDA);
+    ASSERT_EQ(Token("cond").type(), TOKEN_COND);
     ASSERT_EQ(Token("(").type(), TOKEN_LPARENT);
     ASSERT_EQ(Token(")").type(), TOKEN_RPARENT);
     ASSERT_EQ(Token("+").type(), TOKEN_ID);

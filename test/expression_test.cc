@@ -134,6 +134,14 @@ TEST_F(ExpressionTest, DefineProcedureAndApply2) {
     EXPECT_EQ(apply.eval(env_).quote(), "abc");
 }
 
+TEST_F(ExpressionTest, CondExpression) {
+    eval("(define (f x) (cond ((< x 10) (+ x 10)) ((< x 100) (+ x 100)) (else (+ x 1000))))");
+
+    //EXPECT_EQ(eval("(f 2000)").num(), 3000);
+    EXPECT_EQ(eval("(f 20)").num(), 120);
+    EXPECT_EQ(eval("(f 5)").num(), 15);
+}
+
 TEST_F(ExpressionTest, LambdaExpressionBasics) {
     auto lambda = expr("(lambda (x) (+ x x))");
     EXPECT_EQ(isinstance<ValueExpression>(lambda.get()), true);

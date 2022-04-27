@@ -38,6 +38,11 @@ Token::Token(std::string name): name_{name} {
         return;
     }
 
+    if (name == "cond") {
+        type_ = TOKEN_COND;
+        return;
+    }
+
     if (name == "(") {
         type_ = TOKEN_LPARENT;
         return;

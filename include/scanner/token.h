@@ -10,6 +10,7 @@ typedef enum {
     TOKEN_DEFINE,
     TOKEN_LET,
     TOKEN_LAMBDA,
+    TOKEN_COND,
     TOKEN_LPARENT = '(',
     TOKEN_RPARENT = ')',
 } TokenType;

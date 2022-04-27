@@ -118,3 +118,13 @@ private:
     ExpressionPtr function_;
     std::vector<ExpressionPtr> args_;
 };
+
+class CondExpression : public Expression {
+public:
+    CondExpression(const ParseTreePointer &parse_tree);
+    Value eval(const EnvironmentPtr &env) const;
+
+private:
+    std::vector<ExpressionPtr> conditions_;
+    std::vector<ExpressionPtr> exprs_;
+};

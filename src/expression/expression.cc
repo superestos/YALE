@@ -13,6 +13,8 @@ ExpressionPtr Expression::create(const ParseTreePointer &parse_tree) {
                 return std::make_shared<DefineExpression>(parse_tree);
             } else if (children[0]->token().name() == "lambda") {
                 return std::make_shared<ValueExpression>(parse_tree);
+            } else if (children[0]->token().name() == "cond") {
+                return std::make_shared<CondExpression>(parse_tree);
             }
         }
         return std::make_shared<ApplyExpression>(parse_tree);
@@ -159,4 +161,34 @@ Value ApplyExpression::eval(const EnvironmentPtr &env) const {
         value.env()->set_enclosing(env);
         return value.procedure()->call(value.env(), args_);
     }
+}
+
+CondExpression::CondExpression(const ParseTreePointer &parse_tree) {
+    assert(parse_tree->isCompound());
+    auto& children = parse_tree->children();
+    assert(children.size() > 1);
+    assert(children[0]->token().name() == "cond");
+
+    for (size_t i = 1; i < children.size(); i++) {
+        auto& subexpr = children[i];
+        assert(subexpr->isCompound());
+        assert(subexpr->children().size() == 2);
+
+        conditions_.emplace_back(Expression::create(subexpr->children()[0]));
+        exprs_.emplace_back(Expression::create(subexpr->children()[1]));
+    }
+}
+
+Value CondExpression::eval(const EnvironmentPtr &env) const {
+    for (size_t i = 0; i < conditions_.size(); i++) {
+        Value satisified = conditions_[i]->eval(env);
+        assert(satisified.type() == VALUE_NUM);
+
+        if (satisified.num() != 0) {
+            return exprs_[i]->eval(env);
+        }
+    }
+
+    assert(false);
+    return Value();
 }

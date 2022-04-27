@@ -40,6 +40,7 @@ bool Environment::local_existed(const std::string &name) const {
 void Environment::add_builtin() {
     define("true", Value(1));
     define("false", Value(0));
+    define("else", Value(1));
 
     define("+", Value(Procedure::create<AddProcedure>()));
     define("=", Value(Procedure::create<EqualProcedure>()));
