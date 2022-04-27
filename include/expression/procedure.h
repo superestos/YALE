@@ -14,6 +14,8 @@ public:
         return std::shared_ptr<Procedure>(new T());
     }
 
+    static ProcedurePtr create(ExpressionPtr expr, const std::vector<std::string>& names);
+
 protected:
     std::pair<Value, Value> eval_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 };
@@ -42,8 +44,6 @@ public:
         expr_{expr}, names_{names} {}
 
     Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
-
-    static ProcedurePtr create(ExpressionPtr expr, const std::vector<std::string>& names);
 
 private:
     ExpressionPtr expr_;

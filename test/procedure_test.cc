@@ -113,7 +113,7 @@ TEST_F(ProcedureTest, SelfDefinedIncrease) {
 TEST_F(ProcedureTest, SelfDefinedFib) {
     auto fib_expr = expr("(if (< x 2) 1 (+ (fib (+ x -1)) (fib (+ x -2))))");
 
-    ProcedurePtr fib_func = SelfDefinedProcedure::create(fib_expr, {"x"});
+    ProcedurePtr fib_func = Procedure::create(fib_expr, {"x"});
     env_->define("fib", Value(fib_func));
     env_->define("+", Value(Procedure::create<AddProcedure>()));
     env_->define("<", Value(Procedure::create<SmallProcedure>()));

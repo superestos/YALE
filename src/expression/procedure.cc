@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-ProcedurePtr SelfDefinedProcedure::create(ExpressionPtr expr, const std::vector<std::string>& names) {
+ProcedurePtr Procedure::create(ExpressionPtr expr, const std::vector<std::string>& names) {
     return std::shared_ptr<Procedure>(new SelfDefinedProcedure(expr, names));
 }
 
