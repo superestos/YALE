@@ -124,7 +124,7 @@ DefineExpression::DefineExpression(const ParseTreePointer &parse_tree) {
 }
 
 Value DefineExpression::eval(const EnvironmentPtr &env) const {
-    Value value = arg_names_.empty()? expr_->eval(env): Value(Procedure::create(expr_, arg_names_), env);
+    Value value = arg_names_.empty()? expr_->eval(env): Value(Procedure::create(expr_, arg_names_));
     if (type_ == DEFINE) {
         env->define(name_, value);
     } else {
@@ -163,7 +163,9 @@ ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree) {
 Value ApplyExpression::eval(const EnvironmentPtr &env) const {
     Value value = function_->eval(env);
     assert(value.type() == VALUE_PROCEDURE);
+
     if (value.env().get() == nullptr) {
+        // this procedure is not derived from the partial evaluated function
         return value.procedure()->call(env, args_);
     } else {
         //value.env()->set_enclosing(env);

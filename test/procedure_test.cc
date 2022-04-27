@@ -87,6 +87,7 @@ TEST_F(ProcedureTest, List) {
     EXPECT_EQ(eval("(null? (cdr c))").num(), 0);
     EXPECT_EQ(eval("(car (cdr c))").num(), 2);
     EXPECT_EQ(eval("(null? (cdr (cdr c)))").num(), 0);
+    EXPECT_EQ(eval("(car (cdr (cdr c)))").num(), 3);
     EXPECT_EQ(eval("(null? (cdr (cdr (cdr c))))").num(), 1);
 }
 
@@ -141,3 +142,38 @@ TEST_F(ProcedureTest, DefinedAcc) {
 
     EXPECT_EQ(eval("(a1 20)").num(), 60);
 }
+
+TEST_F(ProcedureTest, DefinedExisted) {
+    eval(" \
+    (define (element-of-set? x set) \
+        (cond ((null? set) false) \
+              ((= x (car set)) true) \
+              ((< x (car set)) false) \
+              (else (element-of-set? x (cdr set))) \
+    ))");
+
+    /*
+    auto existed_expr = expr(" \
+    (cond ((null? set) false) \
+              ((= x (car set)) true) \
+              ((< x (car set)) false) \
+              (else (element-of-set? x (cdr set))) \
+    )");
+    ProcedurePtr existed_func = Procedure::create(existed_expr, {"x", "set"});
+    env_->define("element-of-set?", Value(existed_func));
+    */
+
+    eval("(define empty (list))");
+    eval("(define a (list 2 5 7))");
+
+    EXPECT_EQ(eval("(element-of-set? 1 empty)").num(), 0);
+    EXPECT_EQ(eval("(element-of-set? 1 a)").num(), 0);    
+    EXPECT_EQ(eval("(element-of-set? 2 a)").num(), 1);
+
+    EXPECT_EQ(eval("(element-of-set? 3 a)").num(), 0);
+    
+    EXPECT_EQ(eval("(element-of-set? 5 a)").num(), 1);
+    EXPECT_EQ(eval("(element-of-set? 6 a)").num(), 0);
+    EXPECT_EQ(eval("(element-of-set? 7 a)").num(), 1);
+    EXPECT_EQ(eval("(element-of-set? 9 a)").num(), 0);
+} 
