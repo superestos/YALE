@@ -20,8 +20,21 @@ protected:
     std::pair<Value, Value> eval_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
 };
 
+class LambdaProcedure : public Procedure {
+public:
+    LambdaProcedure(ExpressionPtr expr, const std::vector<std::string>& names):
+        expr_{expr}, names_{names} {}
+
+    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
+
+private:
+    ExpressionPtr expr_;
+    std::vector<std::string> names_;
+};
+
 
 #define concat(x, y) x ## y
+
 #define def_procedure_class(name) \
 class concat(name, Procedure) : public Procedure { \
 public: \
@@ -37,15 +50,3 @@ def_procedure_class(Set)
 def_procedure_class(Cons)
 def_procedure_class(Car)
 def_procedure_class(Cdr)
-
-class SelfDefinedProcedure : public Procedure {
-public:
-    SelfDefinedProcedure(ExpressionPtr expr, const std::vector<std::string>& names):
-        expr_{expr}, names_{names} {}
-
-    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
-
-private:
-    ExpressionPtr expr_;
-    std::vector<std::string> names_;
-};

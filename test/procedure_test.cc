@@ -93,24 +93,24 @@ TEST_F(ProcedureTest, Cons) {
     EXPECT_EQ(eval("(cdr x)").num(), 2);
 }
 
-TEST_F(ProcedureTest, SelfDefinedIdentity) {
+TEST_F(ProcedureTest, DefinedIdentity) {
     auto id = expr("x");
-    SelfDefinedProcedure identity(id, {"x"});
+    LambdaProcedure identity(id, {"x"});
 
     EXPECT_EQ(identity.call(env_, {expr("42")}).num(), 42);
     EXPECT_EQ(identity.call(env_, {expr("'hi")}).quote(), "hi");
 }
 
-TEST_F(ProcedureTest, SelfDefinedIncrease) {
+TEST_F(ProcedureTest, DefinedIncrease) {
     auto inc = expr("(+ x 1)");
-    SelfDefinedProcedure func(inc, {"x"});
+    LambdaProcedure func(inc, {"x"});
     env_->define("+", Value(Procedure::create<AddProcedure>()));
 
     EXPECT_EQ(func.call(env_, {expr("42")}).num(), 43);
     EXPECT_EQ(func.call(env_, {expr("-42")}).num(), -41);
 }
 
-TEST_F(ProcedureTest, SelfDefinedFib) {
+TEST_F(ProcedureTest, DefinedFib) {
     auto fib_expr = expr("(if (< x 2) 1 (+ (fib (+ x -1)) (fib (+ x -2))))");
 
     ProcedurePtr fib_func = Procedure::create(fib_expr, {"x"});
@@ -130,7 +130,7 @@ TEST_F(ProcedureTest, SelfDefinedFib) {
     EXPECT_EQ(fib_func->call(env_, {expr("9")}).num(), 55);
 }
 
-TEST_F(ProcedureTest, SelfDefinedAcc) {
+TEST_F(ProcedureTest, DefinedAcc) {
     env_->define("set!", Value(Procedure::create<SetProcedure>()));
     env_->define("+", Value(Procedure::create<AddProcedure>()));
     env_->define("begin", Value(Procedure::create<BeginProcedure>()));

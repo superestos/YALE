@@ -3,7 +3,7 @@
 #include <cassert>
 
 ProcedurePtr Procedure::create(ExpressionPtr expr, const std::vector<std::string>& names) {
-    return std::shared_ptr<Procedure>(new SelfDefinedProcedure(expr, names));
+    return std::shared_ptr<Procedure>(new LambdaProcedure(expr, names));
 }
 
 std::pair<Value, Value> Procedure::eval_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
@@ -13,14 +13,16 @@ std::pair<Value, Value> Procedure::eval_args(const EnvironmentPtr &env, const st
     return pair;
 }
 
-Value AddProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+#define def_procedure_call(name) Value concat(name, Procedure)::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const
+
+def_procedure_call(Add) {
     Value left, right;
     std::tie(left, right) = this->eval_args(env, args);
     assert(left.type() == VALUE_NUM);
     return Value(left.num() + right.num());
 }
 
-Value EqualProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+def_procedure_call(Equal) {
     assert(args.size() == 2);
     Value left = args[0]->eval(env);
     Value right = args[1]->eval(env);
@@ -43,7 +45,7 @@ Value EqualProcedure::call(const EnvironmentPtr &env, const std::vector<Expressi
     assert(false);
 }
 
-Value SmallProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+def_procedure_call(Small) {
     assert(args.size() == 2);
     Value left = args[0]->eval(env);
     Value right = args[1]->eval(env);
@@ -58,7 +60,7 @@ Value SmallProcedure::call(const EnvironmentPtr &env, const std::vector<Expressi
     assert(false);
 }
 
-Value IfProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+def_procedure_call(If) {
     assert(args.size() == 3);
     Value cond = args[0]->eval(env);
     assert(cond.type() == VALUE_NUM);
@@ -66,7 +68,7 @@ Value IfProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionP
     return cond.num() != 0? args[1]->eval(env): args[2]->eval(env);
 }
 
-Value BeginProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+def_procedure_call(Begin) {
     Value value;
     for (auto &arg: args) {
         value = arg->eval(env);
@@ -74,7 +76,7 @@ Value BeginProcedure::call(const EnvironmentPtr &env, const std::vector<Expressi
     return value;
 }
 
-Value SetProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+def_procedure_call(Set) {
     assert(args.size() == 2);
     auto var = reinterpret_cast<VariableExpression*>(args[0].get());
     assert(var != nullptr);
@@ -84,26 +86,26 @@ Value SetProcedure::call(const EnvironmentPtr &env, const std::vector<Expression
     return Value();
 }
 
-Value ConsProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+def_procedure_call(Cons) {
     assert(args.size() == 2);
     return Value({std::make_shared<Value>(args[0]->eval(env)), std::make_shared<Value>(args[1]->eval(env))});
 }
 
-Value CarProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+def_procedure_call(Car) {
     assert(args.size() == 1);
     Value value = args[0]->eval(env);
     assert(value.type() == VALUE_CONSTRUCT);
     return *value.cons()[0];
 }
 
-Value CdrProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+def_procedure_call(Cdr) {
     assert(args.size() == 1);
     Value value = args[0]->eval(env);
     assert(value.type() == VALUE_CONSTRUCT);
     return *value.cons()[1];
 }
 
-Value SelfDefinedProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
+Value LambdaProcedure::call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const {
     assert(args.size() == names_.size());
     EnvironmentPtr new_env = EnvironmentManager::create(env);
 

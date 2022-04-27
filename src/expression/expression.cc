@@ -82,7 +82,7 @@ Value ValueExpression::parse_lambda(const ParseTreePointer &parse_tree) {
     }
 
     auto expr = Expression::create(children[2]);
-    return Value(SelfDefinedProcedure::create(expr, names));
+    return Value(Procedure::create(expr, names));
 }
 
 Value ValueExpression::eval(const EnvironmentPtr &env) const {
@@ -118,7 +118,7 @@ Value DefineExpression::eval(const EnvironmentPtr &env) const {
     if (arg_names_.empty()) {
         env->define(name_, expr_->eval(env));
     } else {
-        env->define(name_, Value(SelfDefinedProcedure::create(expr_, arg_names_), env));
+        env->define(name_, Value(Procedure::create(expr_, arg_names_), env));
     }
     return Value();
 }
