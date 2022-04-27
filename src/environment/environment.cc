@@ -51,8 +51,6 @@ void Environment::add_builtin() {
     define("<", Value(Procedure::create<SmallProcedure>()));
     define("if", Value(Procedure::create<IfProcedure>()));
     define("begin", Value(Procedure::create<BeginProcedure>()));
-
-    define("set!", Value(Procedure::create<SetProcedure>()));
     
     define("cons", Value(Procedure::create<ConsProcedure>()));
     define("car", Value(Procedure::create<CarProcedure>()));

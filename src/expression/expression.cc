@@ -9,11 +9,11 @@ ExpressionPtr Expression::create(const ParseTreePointer &parse_tree) {
         auto &children = parse_tree->children();
 
         if (!children[0]->isCompound()) {
-            if (children[0]->token().name() == "define") {
+            if (children[0]->token().type() == TOKEN_DEFINE) {
                 return std::make_shared<DefineExpression>(parse_tree);
-            } else if (children[0]->token().name() == "lambda") {
+            } else if (children[0]->token().type() == TOKEN_LAMBDA) {
                 return std::make_shared<ValueExpression>(parse_tree);
-            } else if (children[0]->token().name() == "cond") {
+            } else if (children[0]->token().type() == TOKEN_COND) {
                 return std::make_shared<CondExpression>(parse_tree);
             }
         }
@@ -95,7 +95,14 @@ DefineExpression::DefineExpression(const ParseTreePointer &parse_tree) {
     assert(parse_tree->isCompound());
     auto& children = parse_tree->children();
     assert(children.size() == 3);
-    assert(children[0]->token().name() == "define");
+
+    if (children[0]->token().name() == "define") {
+        type_ = DEFINE;
+    } else if (children[0]->token().name() == "set!") {
+        type_ = SET;
+    } else {
+        assert(false);
+    }
 
     if (children[1]->isCompound()) {
         auto& def = children[1]->children();
@@ -117,10 +124,11 @@ DefineExpression::DefineExpression(const ParseTreePointer &parse_tree) {
 }
 
 Value DefineExpression::eval(const EnvironmentPtr &env) const {
-    if (arg_names_.empty()) {
-        env->define(name_, expr_->eval(env));
+    Value value = arg_names_.empty()? expr_->eval(env): Value(Procedure::create(expr_, arg_names_), env);
+    if (type_ == DEFINE) {
+        env->define(name_, value);
     } else {
-        env->define(name_, Value(Procedure::create(expr_, arg_names_), env));
+        env->set(name_, value);
     }
     return Value();
 }
@@ -167,7 +175,7 @@ CondExpression::CondExpression(const ParseTreePointer &parse_tree) {
     assert(parse_tree->isCompound());
     auto& children = parse_tree->children();
     assert(children.size() > 1);
-    assert(children[0]->token().name() == "cond");
+    assert(children[0]->token().type() == TOKEN_COND);
 
     for (size_t i = 1; i < children.size(); i++) {
         auto& subexpr = children[i];

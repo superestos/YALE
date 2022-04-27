@@ -80,6 +80,17 @@ TEST_F(ExpressionTest, DefineExpression2) {
     EXPECT_EQ(env_->get("val").num(), 42);
 }
 
+TEST_F(ExpressionTest, SetExpression) {
+    eval("(define x 0)");
+    EXPECT_EQ(env_->get("x").num(), 0);
+
+    EXPECT_EQ(eval("(set! x 4)").type(), VALUE_VOID);
+    EXPECT_EQ(env_->get("x").num(), 4);
+
+    EXPECT_EQ(eval("(set! x (+ x 1))").type(), VALUE_VOID);
+    EXPECT_EQ(env_->get("x").num(), 5);
+}
+
 TEST_F(ExpressionTest, VariableExpression1) {
     ExpressionPtr var = std::shared_ptr<Expression>(new VariableExpression("x"));
 

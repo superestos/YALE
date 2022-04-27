@@ -66,17 +66,6 @@ TEST_F(ProcedureTest, Begin) {
     EXPECT_EQ(eval("(begin 1 2 '3rd)").quote(), "3rd");
 }
 
-TEST_F(ProcedureTest, Set) {
-    eval("(define x 0)");
-    EXPECT_EQ(env_->get("x").num(), 0);
-
-    EXPECT_EQ(eval("(set! x 4)").type(), VALUE_VOID);
-    EXPECT_EQ(env_->get("x").num(), 4);
-
-    EXPECT_EQ(eval("(set! x (+ x 1))").type(), VALUE_VOID);
-    EXPECT_EQ(env_->get("x").num(), 5);
-}
-
 TEST_F(ProcedureTest, Cons) {
     eval("(define x (cons 1 2))");
     EXPECT_EQ(eval("(car x)").num(), 1);

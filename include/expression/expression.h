@@ -81,8 +81,13 @@ private:
 
 class DefineExpression : public Expression {
 public:
-    DefineExpression(std::string name, ExpressionPtr expr, const std::vector<std::string> &arg_names = {}):
-        name_{name}, arg_names_{arg_names}, expr_{expr} {}
+    typedef enum {
+        DEFINE,
+        SET,
+    } Type;
+
+    DefineExpression(std::string name, ExpressionPtr expr, const std::vector<std::string> &arg_names = {}, Type type = DEFINE):
+        name_{name}, arg_names_{arg_names}, expr_{expr}, type_{type} {}
 
     DefineExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
@@ -91,6 +96,7 @@ private:
     std::string name_;
     std::vector<std::string> arg_names_;
     ExpressionPtr expr_;
+    Type type_;
 };
 
 class VariableExpression : public Expression {

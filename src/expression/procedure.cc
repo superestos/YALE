@@ -81,16 +81,6 @@ def_procedure_call(Begin) {
     return args.empty()? Value(): this->eval_variant_args(env, args)[args.size() - 1];
 }
 
-def_procedure_call(Set) {
-    assert(args.size() == 2);
-    auto var = reinterpret_cast<VariableExpression*>(args[0].get());
-    assert(var != nullptr);
-
-    std::string name = var->name();
-    env->set(name, args[1]->eval(env));
-    return Value();
-}
-
 def_procedure_call(Cons) {
     assert(args.size() == 2);
     return Value({std::make_shared<Value>(args[0]->eval(env)), std::make_shared<Value>(args[1]->eval(env))});

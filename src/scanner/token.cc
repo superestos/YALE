@@ -23,7 +23,7 @@ Token::Token(std::string name): name_{name} {
         return;
     }
 
-    if (name == "define") {
+    if (name == "define" || name == "set!") {
         type_ = TOKEN_DEFINE;
         return;
     }
