@@ -158,7 +158,7 @@ Value ApplyExpression::eval(const EnvironmentPtr &env) const {
     if (value.env().get() == nullptr) {
         return value.procedure()->call(env, args_);
     } else {
-        value.env()->set_enclosing(env);
+        //value.env()->set_enclosing(env);
         return value.procedure()->call(value.env(), args_);
     }
 }

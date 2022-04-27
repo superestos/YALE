@@ -30,6 +30,10 @@ bool Environment::existed(const std::string &name) const {
 }
 
 void Environment::set_enclosing(const EnvironmentPtr &enclosing) {
+    if (enclosing.get() == enclosing_.get()) {
+        return;
+    }
+
     enclosing_ = enclosing;
 }
 
