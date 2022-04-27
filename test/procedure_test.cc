@@ -93,6 +93,30 @@ TEST_F(ProcedureTest, Cons) {
     EXPECT_EQ(eval("(cdr x)").num(), 2);
 }
 
+TEST_F(ProcedureTest, List) {
+    env_->define("cons", Value(Procedure::create<ConsProcedure>()));
+    env_->define("car", Value(Procedure::create<CarProcedure>()));
+    env_->define("cdr", Value(Procedure::create<CdrProcedure>()));
+    env_->define("null?", Value(Procedure::create<NullProcedure>()));
+    env_->define("list", Value(Procedure::create<ListProcedure>()));
+
+    eval("(define a (list))");
+    EXPECT_EQ(eval("(null? a)").num(), 1);
+
+    eval("(define b (list 1))");
+    EXPECT_EQ(eval("(null? b)").num(), 0);
+    EXPECT_EQ(eval("(car b)").num(), 1);
+    EXPECT_EQ(eval("(null? (cdr b))").num(), 1);
+
+    eval("(define c (list 1 2 3))");
+    EXPECT_EQ(eval("(null? c)").num(), 0);
+    EXPECT_EQ(eval("(car c)").num(), 1);
+    EXPECT_EQ(eval("(null? (cdr c))").num(), 0);
+    EXPECT_EQ(eval("(car (cdr c))").num(), 2);
+    EXPECT_EQ(eval("(null? (cdr (cdr c)))").num(), 0);
+    EXPECT_EQ(eval("(null? (cdr (cdr (cdr c))))").num(), 1);
+}
+
 TEST_F(ProcedureTest, DefinedIdentity) {
     auto id = expr("x");
     LambdaProcedure identity(id, {"x"});

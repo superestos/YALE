@@ -96,6 +96,23 @@ def_procedure_call(Cons) {
     return Value({std::make_shared<Value>(args[0]->eval(env)), std::make_shared<Value>(args[1]->eval(env))});
 }
 
+def_procedure_call(Null) {
+    assert(args.size() == 1);
+    return args[0]->eval(env).type() == VALUE_VOID;
+}
+
+def_procedure_call(List) {
+    auto values = this->eval_variant_args(env, args);
+    auto result = std::make_shared<Value>();
+
+    for (auto it = values.crbegin(); it != values.crend(); ++it) {
+        Construct cons = {std::make_shared<Value>(*it), result};
+        result = std::make_shared<Value>(cons);
+    }
+    
+    return Value(*result);
+}
+
 def_procedure_call(Car) {
     assert(args.size() == 1);
     Value value = args[0]->eval(env);
