@@ -152,17 +152,6 @@ TEST_F(ProcedureTest, DefinedExisted) {
               (else (element-of-set? x (cdr set))) \
     ))");
 
-    /*
-    auto existed_expr = expr(" \
-    (cond ((null? set) false) \
-              ((= x (car set)) true) \
-              ((< x (car set)) false) \
-              (else (element-of-set? x (cdr set))) \
-    )");
-    ProcedurePtr existed_func = Procedure::create(existed_expr, {"x", "set"});
-    env_->define("element-of-set?", Value(existed_func));
-    */
-
     eval("(define empty (list))");
     eval("(define a (list 2 5 7))");
 
@@ -176,4 +165,18 @@ TEST_F(ProcedureTest, DefinedExisted) {
     EXPECT_EQ(eval("(element-of-set? 6 a)").num(), 0);
     EXPECT_EQ(eval("(element-of-set? 7 a)").num(), 1);
     EXPECT_EQ(eval("(element-of-set? 9 a)").num(), 0);
-} 
+}
+
+TEST_F(ProcedureTest, DefinedPair) {
+    eval("(define (pair x y) (lambda (m) (cond ((= m 'head) x) ((= m 'tail) y) (else 'error))))");
+
+    EXPECT_EQ(eval("((pair 3 5) 'head)").num(), 3);
+    EXPECT_EQ(eval("((pair 3 5) 'tail)").num(), 5);
+
+    eval("(define (head p) (p 'head))");
+    eval("(define (tail p) (p 'tail))");
+    eval("(define a (pair 4 7))");
+
+    EXPECT_EQ(eval("(head a)").num(), 4);
+    EXPECT_EQ(eval("(tail a)").num(), 7);
+}
