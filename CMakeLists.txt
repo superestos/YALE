@@ -17,6 +17,8 @@ enable_testing()
 
 file(GLOB_RECURSE yale_src CONFIGURE_DEPENDS "./src/*.cc")
 
+add_executable(yale ${yale_src} main.cc)
+
 add_executable(hello_test test/hello_test.cc)
 add_executable(scanner_test ${yale_src} test/scanner_test.cc)
 add_executable(parser_test ${yale_src} test/parser_test.cc)

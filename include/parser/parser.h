@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stack>
 
 #include "parser/parse_tree.h"
