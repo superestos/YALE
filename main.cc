@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
     if (argc == 1) {
         Evaluator evaluator(std::cin);
         auto value = evaluator.eval();
-        std::cout << value.num() << std::endl;
+        std::cout << value << std::endl;
 
     } else if (argc == 2) {
         std::string filename(argv[1]);
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 
         Evaluator evaluator(file);
         auto value = evaluator.eval();
-        std::cout << value.num() << std::endl;
+        std::cout << value << std::endl;
 
     } else {
         std::cout << "usage: " << std::string(argv[0]) << " [file]" << std::endl;

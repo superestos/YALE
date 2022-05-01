@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include <cassert>
+#include <ostream>
 
 #include "parser/parser.h"
 
@@ -53,7 +54,7 @@ public:
     const Quote& quote() const;
     const ProcedurePtr procedure() const;
     const Construct cons() const;
-    const EnvironmentPtr env() const;    
+    const EnvironmentPtr env() const;
 
 private:
     ValueType type_;
@@ -65,6 +66,8 @@ private:
 
     Construct cons_;
 };
+
+std::ostream& operator<<(std::ostream& out, const Value &value);
 
 class ValueExpression : public Expression {
 public:

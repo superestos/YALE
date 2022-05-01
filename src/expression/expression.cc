@@ -57,6 +57,17 @@ const Construct Value::cons() const {
     return cons_;
 }
 
+std::ostream& operator<<(std::ostream& out, const Value &value) {
+    switch(value.type()) {
+        case VALUE_VOID: return out << "<null>";
+        case VALUE_NUM: return out << value.num();
+        case VALUE_QUOTE: return out << "'" << value.quote();
+        case VALUE_PROCEDURE: return out << "<procedure>";
+        case VALUE_CONSTRUCT: return out << "(" << *(value.cons()[0]) << ", " << *(value.cons()[1]) << ")";
+    }
+    assert(false);
+}
+
 ValueExpression::ValueExpression(const ParseTreePointer &parse_tree) {
     if (!parse_tree->isCompound()) {
         Token token = parse_tree->token();
