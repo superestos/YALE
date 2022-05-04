@@ -181,6 +181,27 @@ TEST_F(ProcedureTest, DefinedPair) {
     EXPECT_EQ(eval("(tail a)").num(), 7);
 }
 
+TEST_F(ProcedureTest, ListEqual) {
+    eval(" \
+    (define (list-eq? l1 l2) \
+        (cond ((null? l1) (null? l2)) \
+              ((null? l2) false) \
+              ((= (car l1) (car l2)) (list-eq? (cdr l1) (cdr l2))) \
+              (else false) \
+    ))");
+
+    EXPECT_EQ(eval("(list-eq? (list) (list))").num(), 1);
+    EXPECT_EQ(eval("(list-eq? (list 1) (list))").num(), 0);
+    EXPECT_EQ(eval("(list-eq? (list) (list 1))").num(), 0);
+    EXPECT_EQ(eval("(list-eq? (list 'a) (list 'a))").num(), 1);
+    EXPECT_EQ(eval("(list-eq? (list 'a) (list 'b))").num(), 0);
+    EXPECT_EQ(eval("(list-eq? (list 3) (list (+ 1 2)))").num(), 1);
+    EXPECT_EQ(eval("(list-eq? (list 2 3) (list 2))").num(), 0);
+    EXPECT_EQ(eval("(list-eq? (list 2 8) (list 2 7))").num(), 0);
+    EXPECT_EQ(eval("(list-eq? (list 3) (list 3 2))").num(), 0);
+    EXPECT_EQ(eval("(list-eq? (list 4 5 6) (list 4 (+ 4 1) (+ 4 2)))").num(), 1);
+}
+
 TEST_F(ProcedureTest, Map) {
     eval("(define (map f l) ( \
             if (null? l) l (cons (f (car l)) (map f (cdr l))) \
@@ -193,3 +214,4 @@ TEST_F(ProcedureTest, Map) {
     EXPECT_EQ(eval("dc").cons()[1]->cons()[0]->num(), 4);
     EXPECT_EQ(eval("dc").cons()[1]->cons()[1]->type(), VALUE_VOID);
 }
+
