@@ -180,3 +180,16 @@ TEST_F(ProcedureTest, DefinedPair) {
     EXPECT_EQ(eval("(head a)").num(), 4);
     EXPECT_EQ(eval("(tail a)").num(), 7);
 }
+
+TEST_F(ProcedureTest, Map) {
+    eval("(define (map f l) ( \
+            if (null? l) l (cons (f (car l)) (map f (cdr l))) \
+    ))");
+    eval("(define c (list 1 2))");
+    //eval("(define l (list 3 1 0 4))");
+
+    eval("(define dc (map (lambda (x) (+ x x)) c))");
+    EXPECT_EQ(eval("dc").cons()[0]->num(), 2);
+    EXPECT_EQ(eval("dc").cons()[1]->cons()[0]->num(), 4);
+    EXPECT_EQ(eval("dc").cons()[1]->cons()[1]->type(), VALUE_VOID);
+}
