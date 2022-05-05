@@ -14,13 +14,23 @@ struct Evaluator {
 
     Evaluator(std::istream &is): scanner_{is} {}
 
-    void read() {
+    bool read() {
+        if (parser_.has_next()) {
+            return true;
+        }
+
         scanner_.read();
+        if (scanner_.tokens().empty()) {
+            return false;
+        }
+
         parser_.analyze(scanner_.tokens());
+        scanner_.clear();
+        return parser_.has_next();
     }
 
     auto eval() {
-        read();
+        assert(parser_.has_next());
         return Expression::create(parser_.next())->eval(env_);
     }
 };
@@ -30,6 +40,7 @@ int main(int argc, char *argv[]) {
 
     if (argc == 1) {
         Evaluator evaluator(std::cin);
+        evaluator.read();
         auto value = evaluator.eval();
         std::cout << value << std::endl;
 
@@ -42,8 +53,11 @@ int main(int argc, char *argv[]) {
         }
 
         Evaluator evaluator(file);
-        auto value = evaluator.eval();
-        std::cout << value << std::endl;
+
+        while (evaluator.read()) {
+            auto value = evaluator.eval();
+            std::cout << value << std::endl;
+        }
 
     } else {
         std::cout << "usage: " << std::string(argv[0]) << " [file]" << std::endl;
