@@ -40,9 +40,10 @@ int main(int argc, char *argv[]) {
 
     if (argc == 1) {
         Evaluator evaluator(std::cin);
-        evaluator.read();
-        auto value = evaluator.eval();
-        std::cout << value << std::endl;
+        while (evaluator.read()) {
+            auto value = evaluator.eval();
+            std::cout << value << std::endl;
+        }
 
     } else if (argc == 2) {
         std::string filename(argv[1]);
