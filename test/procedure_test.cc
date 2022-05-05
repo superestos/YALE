@@ -203,6 +203,14 @@ TEST_F(ProcedureTest, ListEqual) {
 }
 
 TEST_F(ProcedureTest, Map) {
+    eval(" \
+    (define (list-eq? l1 l2) \
+        (cond ((null? l1) (null? l2)) \
+              ((null? l2) false) \
+              ((= (car l1) (car l2)) (list-eq? (cdr l1) (cdr l2))) \
+              (else false) \
+    ))");
+
     eval("(define (map f l) ( \
             if (null? l) l (cons (f (car l)) (map f (cdr l))) \
     ))");
@@ -213,5 +221,18 @@ TEST_F(ProcedureTest, Map) {
     EXPECT_EQ(eval("dc").cons()[0]->num(), 2);
     EXPECT_EQ(eval("dc").cons()[1]->cons()[0]->num(), 4);
     EXPECT_EQ(eval("dc").cons()[1]->cons()[1]->type(), VALUE_VOID);
+
+    eval("(define double (lambda (x) (+ x x)))");
+    EXPECT_EQ(eval("(list-eq? (map double (list 4 3 2 1 0)) (list 8 6 4 2 0))").num(), 1);
 }
 
+TEST_F(ProcedureTest, Reduce) {
+    eval("(define (reduce f unit l) ( \
+        if (null? l) unit (f (car l) (reduce f unit (cdr l))) \
+    ))");
+
+    EXPECT_EQ(eval("(reduce + 0 (list))").num(), 0);
+    EXPECT_EQ(eval("(reduce + 0 (list 1))").num(), 1);
+    EXPECT_EQ(eval("(reduce + 0 (list 1 2))").num(), 3);
+    EXPECT_EQ(eval("(reduce + 0 (list 1 2 3))").num(), 6);
+}
