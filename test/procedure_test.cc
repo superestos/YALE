@@ -235,4 +235,13 @@ TEST_F(ProcedureTest, Reduce) {
     EXPECT_EQ(eval("(reduce + 0 (list 1))").num(), 1);
     EXPECT_EQ(eval("(reduce + 0 (list 1 2))").num(), 3);
     EXPECT_EQ(eval("(reduce + 0 (list 1 2 3))").num(), 6);
+
+    eval("(define (fold f acc l) ( \
+        if (null? l) acc (fold f (f acc (car l)) (cdr l)) \
+    ))");
+
+    EXPECT_EQ(eval("(fold + 0 (list))").num(), 0);
+    EXPECT_EQ(eval("(fold + 0 (list 1))").num(), 1);
+    EXPECT_EQ(eval("(fold + 0 (list 1 2))").num(), 3);
+    EXPECT_EQ(eval("(fold + 0 (list 1 2 3))").num(), 6);
 }
