@@ -5,27 +5,28 @@
 #include <memory>
 #include <cassert>
 #include <ostream>
+#include <array>
 
 #include "parser/parser.h"
 
-typedef enum {
+enum ValueType {
     VALUE_VOID,
     VALUE_NUM,
     VALUE_QUOTE,
     VALUE_PROCEDURE,
     VALUE_CONSTRUCT,
-} ValueType;
+};
 
 class Value;
 
 class Environment;
-typedef std::shared_ptr<Environment> EnvironmentPtr;
+using EnvironmentPtr = std::shared_ptr<Environment>;
 
 class Procedure;
-typedef std::shared_ptr<Procedure> ProcedurePtr;
+using ProcedurePtr = std::shared_ptr<Procedure>;
 
 class Expression;
-typedef std::shared_ptr<Expression> ExpressionPtr;
+using ExpressionPtr = std::shared_ptr<Expression>;
 
 class Expression {
 public:
@@ -33,9 +34,9 @@ public:
     static ExpressionPtr create(const ParseTreePointer &parse_tree);
 };
 
-typedef int Num;
-typedef std::string Quote;
-typedef std::array<std::shared_ptr<Value>, 2> Construct;
+using Num = int;
+using Quote = std::string;
+using Construct = std::array<std::shared_ptr<Value>, 2>;
 
 class Value {
 public:
@@ -84,12 +85,12 @@ private:
 
 class DefineExpression : public Expression {
 public:
-    typedef enum {
+    enum DeclareType {
         DEFINE,
         SET,
-    } Type;
+    };
 
-    DefineExpression(std::string name, ExpressionPtr expr, const std::vector<std::string> &arg_names = {}, Type type = DEFINE):
+    DefineExpression(std::string name, ExpressionPtr expr, const std::vector<std::string> &arg_names = {}, DeclareType type = DEFINE):
         name_{name}, arg_names_{arg_names}, expr_{expr}, type_{type} {}
 
     DefineExpression(const ParseTreePointer &parse_tree);
@@ -99,7 +100,7 @@ private:
     std::string name_;
     std::vector<std::string> arg_names_;
     ExpressionPtr expr_;
-    Type type_;
+    DeclareType type_;
 };
 
 class VariableExpression : public Expression {

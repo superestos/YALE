@@ -26,10 +26,10 @@ private:
     
 };
 
-typedef enum {
+enum EnvironmentConfig {
     ENV_EMPTY,
     ENV_BUILTIN,
-} EnvironmentConfig;
+};
 
 class EnvironmentManager {
 public:

@@ -7,7 +7,7 @@
 #include "scanner/token.h"
 
 class ParseTreeNode;
-typedef std::shared_ptr<ParseTreeNode> ParseTreePointer;
+using ParseTreePointer = std::shared_ptr<ParseTreeNode>;
 
 class ParseTreeNode {
 public:

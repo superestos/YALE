@@ -2,7 +2,7 @@
 
 #include <string>
 
-typedef enum {
+enum TokenType {
     TOKEN_ERR,
     TOKEN_NUM,
     TOKEN_QUOTE,
@@ -13,7 +13,7 @@ typedef enum {
     TOKEN_COND,
     TOKEN_LPARENT = '(',
     TOKEN_RPARENT = ')',
-} TokenType;
+};
 
 class Token {
 public:
