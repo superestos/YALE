@@ -6,6 +6,7 @@
 #include <cassert>
 #include <ostream>
 #include <array>
+#include <variant>
 
 #include "parser/parser.h"
 
@@ -42,13 +43,13 @@ class Value {
 public:
     Value(): type_{VALUE_VOID} {}
 
-    Value(Num value): type_{VALUE_NUM}, num_{value} {}
+    Value(Num value): type_{VALUE_NUM}, val_{value} {}
 
-    Value(Quote value): type_{VALUE_QUOTE}, quote_{value} {}
+    Value(Quote value): type_{VALUE_QUOTE}, val_{value} {}
 
-    Value(ProcedurePtr value, EnvironmentPtr env = {}): type_{VALUE_PROCEDURE}, procedure_{value}, env_{env} {}
+    Value(ProcedurePtr value, EnvironmentPtr env = {}): type_{VALUE_PROCEDURE}, val_{std::pair{value, env}} {}
 
-    Value(Construct cons): type_{VALUE_CONSTRUCT}, cons_{cons} {}
+    Value(Construct cons): type_{VALUE_CONSTRUCT}, val_{cons} {}
 
     ValueType type() const;
     Num num() const;
@@ -58,14 +59,10 @@ public:
     const EnvironmentPtr env() const;
 
 private:
+    using Closure = std::pair<ProcedurePtr, EnvironmentPtr>;
+
     ValueType type_;
-    Num num_;
-    Quote quote_;
-
-    ProcedurePtr procedure_;
-    EnvironmentPtr env_;
-
-    Construct cons_;
+    std::variant<Num, Quote, Closure, Construct> val_;
 };
 
 std::ostream& operator<<(std::ostream& out, const Value &value);

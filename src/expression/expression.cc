@@ -34,27 +34,27 @@ ValueType Value::type() const {
 
 Num Value::num() const {
     assert(type() == VALUE_NUM);
-    return num_;
+    return std::get<Num>(val_);
 }
 
 const Quote& Value::quote() const {
     assert(type() == VALUE_QUOTE);
-    return quote_;
+    return std::get<Quote>(val_);
 }
 
 const ProcedurePtr Value::procedure() const {
     assert(type() == VALUE_PROCEDURE);
-    return procedure_;
+    return std::get<Closure>(val_).first;
 }
 
 const EnvironmentPtr Value::env() const {
     assert(type() == VALUE_PROCEDURE);
-    return env_;
+    return std::get<Closure>(val_).second;
 }
 
 const Construct Value::cons() const {
     assert(type() == VALUE_CONSTRUCT);
-    return cons_;
+    return std::get<Construct>(val_);
 }
 
 std::ostream& operator<<(std::ostream& out, const Value &value) {
