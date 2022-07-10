@@ -149,6 +149,22 @@ public:
     Value eval(const EnvironmentPtr &env) const;
     Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
 
+    ExpressionPtr function() const {
+        return function_;
+    }
+
+    ExpressionPtr arg(size_t i) const {
+        return args_[i];
+    }
+
+    std::vector<ExpressionPtr> args() const {
+        return args_;
+    }
+
+    size_t length() const {
+        return args_.size();
+    }
+
 private:
     ExpressionPtr function_;
     std::vector<ExpressionPtr> args_;
@@ -160,11 +176,11 @@ public:
     Value eval(const EnvironmentPtr &env) const;
     Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
 
-    ExpressionPtr conditions(size_t i) const {
+    ExpressionPtr condition(size_t i) const {
         return conditions_[i];
     }
 
-    ExpressionPtr exprs(size_t i) const {
+    ExpressionPtr expr(size_t i) const {
         return exprs_[i];
     }
 

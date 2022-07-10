@@ -23,16 +23,25 @@ Value ExpressionVisitor::visitVariableExpression(const VariableExpression &expr,
 }
 
 Value ExpressionVisitor::visitApplyExpression(const ApplyExpression &expr, const EnvironmentPtr &env) {
-    return expr.eval(env);
+    Value value = expr.function()->accept(*this, env);
+    assert(value.type() == VALUE_PROCEDURE);
+
+    if (value.env().get() == nullptr) {
+        // this procedure is not derived from the partial evaluated function
+        return value.procedure()->call(env, expr.args());
+    } else {
+        //value.env()->set_enclosing(env);
+        return value.procedure()->call(value.env(), expr.args());
+    }
 }
 
 Value ExpressionVisitor::visitCondExpression(const CondExpression &expr, const EnvironmentPtr &env) {
     for (size_t i = 0; i < expr.length(); i++) {
-        Value satisified = expr.conditions(i)->eval(env);
+        Value satisified = expr.condition(i)->accept(*this, env);
         assert(satisified.type() == VALUE_NUM);
 
         if (satisified.num() != 0) {
-            return expr.exprs(i)->eval(env);
+            return expr.expr(i)->accept(*this, env);
         }
     }
 
