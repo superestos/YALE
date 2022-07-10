@@ -78,6 +78,10 @@ public:
     Value eval(const EnvironmentPtr &env) const;
     Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
 
+    Value value() const {
+        return value_;
+    }
+
 private:
     Value value_;
     
@@ -97,6 +101,22 @@ public:
     DefineExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
     Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
+
+    std::string name() const {
+        return name_;
+    }
+
+    std::vector<std::string> arg_names() const {
+        return arg_names_;
+    }
+
+    ExpressionPtr def_expr() const {
+        return expr_;
+    }
+
+    bool is_define() const {
+        return type_ == DEFINE;
+    }
 
 private:
     std::string name_;
@@ -139,6 +159,18 @@ public:
     CondExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
     Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
+
+    ExpressionPtr conditions(size_t i) const {
+        return conditions_[i];
+    }
+
+    ExpressionPtr exprs(size_t i) const {
+        return exprs_[i];
+    }
+
+    size_t length() const {
+        return exprs_.size();
+    }
 
 private:
     std::vector<ExpressionPtr> conditions_;
