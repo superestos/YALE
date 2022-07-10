@@ -9,6 +9,7 @@
 #include <variant>
 
 #include "parser/parser.h"
+//#include "expression/expr_visitor.h"
 
 enum ValueType {
     VALUE_VOID,
@@ -19,6 +20,7 @@ enum ValueType {
 };
 
 class Value;
+class ExpressionVisitor;
 
 class Environment;
 using EnvironmentPtr = std::shared_ptr<Environment>;
@@ -32,6 +34,7 @@ using ExpressionPtr = std::shared_ptr<Expression>;
 class Expression {
 public:
     virtual Value eval(const EnvironmentPtr &env) const = 0;
+    virtual Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const = 0;
     static ExpressionPtr create(const ParseTreePointer &parse_tree);
 };
 
@@ -73,6 +76,7 @@ public:
 
     ValueExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
+    Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
 
 private:
     Value value_;
@@ -92,6 +96,7 @@ public:
 
     DefineExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
+    Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
 
 private:
     std::string name_;
@@ -107,6 +112,8 @@ public:
 
     VariableExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
+    Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
+
     const std::string name() const;
 
 private:
@@ -120,6 +127,7 @@ public:
 
     ApplyExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
+    Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
 
 private:
     ExpressionPtr function_;
@@ -130,6 +138,7 @@ class CondExpression : public Expression {
 public:
     CondExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
+    Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
 
 private:
     std::vector<ExpressionPtr> conditions_;

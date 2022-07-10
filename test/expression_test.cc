@@ -5,6 +5,7 @@
 #include "environment/environment.h"
 #include "scanner/scanner.h"
 #include "expression/procedure.h"
+#include "expression/expr_visitor.h"
 
 class ExpressionTest : public ::testing::Test {
 protected:
@@ -14,6 +15,8 @@ protected:
     std::stringstream input_;
     Scanner scanner_{input_};
     Parser parser_;
+
+    ExpressionVisitor visitor_;
 
     void read(std::string str) {
         input_.clear();
@@ -28,7 +31,8 @@ protected:
     }
 
     auto eval(std::string str) {
-        return expr(str)->eval(env_);
+        //return expr(str)->eval(env_);
+        return expr(str)->accept(visitor_, env_);
     }
 
     template <typename T>

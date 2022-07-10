@@ -2,6 +2,7 @@
 
 #include "expression/procedure.h"
 #include "environment/environment.h"
+#include "expression/expr_visitor.h"
 
 ExpressionPtr Expression::create(const ParseTreePointer &parse_tree) {
     if (parse_tree->isCompound()) {
@@ -102,6 +103,10 @@ Value ValueExpression::eval(const EnvironmentPtr &env) const {
     return value_;
 }
 
+Value ValueExpression::accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const {
+    return visitor.visitValueExpression(*this, env);
+}
+
 DefineExpression::DefineExpression(const ParseTreePointer &parse_tree) {
     assert(parse_tree->isCompound());
     auto& children = parse_tree->children();
@@ -144,6 +149,10 @@ Value DefineExpression::eval(const EnvironmentPtr &env) const {
     return Value();
 }
 
+Value DefineExpression::accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const {
+    return visitor.visitDefineExpression(*this, env);
+}
+
 VariableExpression::VariableExpression(const ParseTreePointer &parse_tree) {
     assert(!parse_tree->isCompound());
     assert(parse_tree->token().type() == TOKEN_ID);
@@ -157,6 +166,10 @@ const std::string VariableExpression::name() const {
 
 Value VariableExpression::eval(const EnvironmentPtr &env) const {
     return env->get(name_);
+}
+
+Value VariableExpression::accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const {
+    return visitor.visitVariableExpression(*this, env);
 }
 
 ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree) {
@@ -182,6 +195,10 @@ Value ApplyExpression::eval(const EnvironmentPtr &env) const {
         //value.env()->set_enclosing(env);
         return value.procedure()->call(value.env(), args_);
     }
+}
+
+Value ApplyExpression::accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const {
+    return visitor.visitApplyExpression(*this, env);
 }
 
 CondExpression::CondExpression(const ParseTreePointer &parse_tree) {
@@ -212,4 +229,8 @@ Value CondExpression::eval(const EnvironmentPtr &env) const {
 
     assert(false);
     return Value();
+}
+
+Value CondExpression::accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const {
+    return visitor.visitCondExpression(*this, env);
 }
