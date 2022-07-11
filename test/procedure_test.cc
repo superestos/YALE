@@ -8,9 +8,6 @@
 
 class ProcedureTest : public ::testing::Test {
 protected:
-    EnvironmentManager manager_{ENV_BUILTIN};
-    EnvironmentPtr env_{manager_.global()};
-
     std::stringstream input_;
     Scanner scanner_{input_};
     Parser parser_;
@@ -30,11 +27,10 @@ protected:
     }
 
     auto eval(std::string str) {
-        //return expr(str)->eval(env_);
         return expr(str)->accept(visitor_);
     }
 };
-/*
+
 TEST_F(ProcedureTest, Add) {
     AddProcedure add;
     auto val1 = expr("2");
@@ -42,7 +38,7 @@ TEST_F(ProcedureTest, Add) {
 
     std::vector<ExpressionPtr> args = {val1, val2};
 
-    EXPECT_EQ(add.call(env_, args).num(), 6);
+    EXPECT_EQ(add.call(visitor_, args).num(), 6);
 }
 
 TEST_F(ProcedureTest, Condition) {
@@ -50,18 +46,18 @@ TEST_F(ProcedureTest, Condition) {
     SmallProcedure small;
     IfProcedure cond;
 
-    EXPECT_EQ(equal.call(env_, {expr("2"), expr("2")}).num(), 1);
-    EXPECT_EQ(equal.call(env_, {expr("3"), expr("2")}).num(), 0);
-    EXPECT_EQ(equal.call(env_, {expr("'b"), expr("'b")}).num(), 1);
-    EXPECT_EQ(equal.call(env_, {expr("'yes"), expr("'no")}).num(), 0);
+    EXPECT_EQ(equal.call(visitor_, {expr("2"), expr("2")}).num(), 1);
+    EXPECT_EQ(equal.call(visitor_, {expr("3"), expr("2")}).num(), 0);
+    EXPECT_EQ(equal.call(visitor_, {expr("'b"), expr("'b")}).num(), 1);
+    EXPECT_EQ(equal.call(visitor_, {expr("'yes"), expr("'no")}).num(), 0);
 
-    EXPECT_EQ(cond.call(env_, {expr("1"), expr("2"), expr("3")}).num(), 2);
-    EXPECT_EQ(cond.call(env_, {expr("0"), expr("2"), expr("3")}).num(), 3);
+    EXPECT_EQ(cond.call(visitor_, {expr("1"), expr("2"), expr("3")}).num(), 2);
+    EXPECT_EQ(cond.call(visitor_, {expr("0"), expr("2"), expr("3")}).num(), 3);
 
-    EXPECT_EQ(cond.call(env_, {expr("(< 1 2)"), expr("2"), expr("3")}).num(), 2);
-    EXPECT_EQ(cond.call(env_, {expr("(< 3 2)"), expr("2"), expr("3")}).num(), 3);
+    EXPECT_EQ(cond.call(visitor_, {expr("(< 1 2)"), expr("2"), expr("3")}).num(), 2);
+    EXPECT_EQ(cond.call(visitor_, {expr("(< 3 2)"), expr("2"), expr("3")}).num(), 3);
 }
-*/
+
 TEST_F(ProcedureTest, Begin) {
     EXPECT_EQ(eval("(begin)").type(), VALUE_VOID);
     EXPECT_EQ(eval("(begin 1)").num(), 1);
@@ -93,40 +89,40 @@ TEST_F(ProcedureTest, List) {
     EXPECT_EQ(eval("(car (cdr (cdr c)))").num(), 3);
     EXPECT_EQ(eval("(null? (cdr (cdr (cdr c))))").num(), 1);
 }
-/*
+
 TEST_F(ProcedureTest, DefinedIdentity) {
     auto id = expr("x");
     LambdaProcedure identity(id, {"x"});
 
-    EXPECT_EQ(identity.call(env_, {expr("42")}).num(), 42);
-    EXPECT_EQ(identity.call(env_, {expr("'hi")}).quote(), "hi");
+    EXPECT_EQ(identity.call(visitor_, {expr("42")}).num(), 42);
+    EXPECT_EQ(identity.call(visitor_, {expr("'hi")}).quote(), "hi");
 }
 
 TEST_F(ProcedureTest, DefinedIncrease) {
     auto inc = expr("(+ x 1)");
     LambdaProcedure func(inc, {"x"});
 
-    EXPECT_EQ(func.call(env_, {expr("42")}).num(), 43);
-    EXPECT_EQ(func.call(env_, {expr("-42")}).num(), -41);
+    EXPECT_EQ(func.call(visitor_, {expr("42")}).num(), 43);
+    EXPECT_EQ(func.call(visitor_, {expr("-42")}).num(), -41);
 }
 
 TEST_F(ProcedureTest, DefinedFib) {
     auto fib_expr = expr("(if (< x 2) 1 (+ (fib (+ x -1)) (fib (+ x -2))))");
 
     ProcedurePtr fib_func = Procedure::create(fib_expr, {"x"});
-    env_->define("fib", Value(fib_func));
+    visitor_.env()->define("fib", Value(fib_func));
 
-    EXPECT_EQ(fib_func->call(env_, {expr("1")}).num(), 1);
-    EXPECT_EQ(fib_func->call(env_, {expr("2")}).num(), 2);
-    EXPECT_EQ(fib_func->call(env_, {expr("3")}).num(), 3);
-    EXPECT_EQ(fib_func->call(env_, {expr("4")}).num(), 5);
-    EXPECT_EQ(fib_func->call(env_, {expr("5")}).num(), 8);
-    EXPECT_EQ(fib_func->call(env_, {expr("6")}).num(), 13);
-    EXPECT_EQ(fib_func->call(env_, {expr("7")}).num(), 21);
-    EXPECT_EQ(fib_func->call(env_, {expr("8")}).num(), 34);
-    EXPECT_EQ(fib_func->call(env_, {expr("9")}).num(), 55);
+    EXPECT_EQ(fib_func->call(visitor_, {expr("1")}).num(), 1);
+    EXPECT_EQ(fib_func->call(visitor_, {expr("2")}).num(), 2);
+    EXPECT_EQ(fib_func->call(visitor_, {expr("3")}).num(), 3);
+    EXPECT_EQ(fib_func->call(visitor_, {expr("4")}).num(), 5);
+    EXPECT_EQ(fib_func->call(visitor_, {expr("5")}).num(), 8);
+    EXPECT_EQ(fib_func->call(visitor_, {expr("6")}).num(), 13);
+    EXPECT_EQ(fib_func->call(visitor_, {expr("7")}).num(), 21);
+    EXPECT_EQ(fib_func->call(visitor_, {expr("8")}).num(), 34);
+    EXPECT_EQ(fib_func->call(visitor_, {expr("9")}).num(), 55);
 }
-*/
+
 TEST_F(ProcedureTest, DefinedAcc) {
     eval("(define (acc balance) (lambda (amount) (begin (set! balance (+ balance amount)) balance)))");
     EXPECT_EQ(eval("(acc 10)").type(), VALUE_PROCEDURE);
