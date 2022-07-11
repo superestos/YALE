@@ -103,8 +103,8 @@ Value ValueExpression::eval(const EnvironmentPtr &env) const {
     return value_;
 }
 
-Value ValueExpression::accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const {
-    return visitor.visitValueExpression(*this, env);
+Value ValueExpression::accept(ExpressionVisitor &visitor) const {
+    return visitor.visitValueExpression(*this);
 }
 
 DefineExpression::DefineExpression(const ParseTreePointer &parse_tree) {
@@ -149,8 +149,8 @@ Value DefineExpression::eval(const EnvironmentPtr &env) const {
     return Value();
 }
 
-Value DefineExpression::accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const {
-    return visitor.visitDefineExpression(*this, env);
+Value DefineExpression::accept(ExpressionVisitor &visitor) const {
+    return visitor.visitDefineExpression(*this);
 }
 
 VariableExpression::VariableExpression(const ParseTreePointer &parse_tree) {
@@ -168,8 +168,8 @@ Value VariableExpression::eval(const EnvironmentPtr &env) const {
     return env->get(name_);
 }
 
-Value VariableExpression::accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const {
-    return visitor.visitVariableExpression(*this, env);
+Value VariableExpression::accept(ExpressionVisitor &visitor) const {
+    return visitor.visitVariableExpression(*this);
 }
 
 ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree) {
@@ -197,8 +197,8 @@ Value ApplyExpression::eval(const EnvironmentPtr &env) const {
     }
 }
 
-Value ApplyExpression::accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const {
-    return visitor.visitApplyExpression(*this, env);
+Value ApplyExpression::accept(ExpressionVisitor &visitor) const {
+    return visitor.visitApplyExpression(*this);
 }
 
 CondExpression::CondExpression(const ParseTreePointer &parse_tree) {
@@ -231,6 +231,6 @@ Value CondExpression::eval(const EnvironmentPtr &env) const {
     return Value();
 }
 
-Value CondExpression::accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const {
-    return visitor.visitCondExpression(*this, env);
+Value CondExpression::accept(ExpressionVisitor &visitor) const {
+    return visitor.visitCondExpression(*this);
 }

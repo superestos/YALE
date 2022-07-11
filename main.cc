@@ -7,9 +7,6 @@
 #include "expression/expr_visitor.h"
 
 struct Evaluator {
-    EnvironmentManager manager_{ENV_BUILTIN};
-    EnvironmentPtr env_{manager_.global()};
-
     Scanner scanner_;
     Parser parser_;
 
@@ -34,7 +31,7 @@ struct Evaluator {
 
     auto eval() {
         assert(parser_.has_next());
-        return Expression::create(parser_.next())->accept(visitor_, env_);
+        return Expression::create(parser_.next())->accept(visitor_);
     }
 };
 

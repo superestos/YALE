@@ -32,7 +32,7 @@ protected:
 
     auto eval(std::string str) {
         //return expr(str)->eval(env_);
-        return expr(str)->accept(visitor_, env_);
+        return expr(str)->accept(visitor_);
     }
 
     template <typename T>
@@ -41,7 +41,7 @@ protected:
     }
 };
 
-TEST_F(ExpressionTest, ValueExpression) {
+TEST_F(ExpressionTest, ValueExpressionUsingSyntaxTree) {
     ParseTreePointer num = ParseTreeNode::create(Token("42"));
     ParseTreePointer quote = ParseTreeNode::create(Token("'hi"));
 
@@ -86,13 +86,13 @@ TEST_F(ExpressionTest, DefineExpression2) {
 
 TEST_F(ExpressionTest, SetExpression) {
     eval("(define x 0)");
-    EXPECT_EQ(env_->get("x").num(), 0);
+    EXPECT_EQ(eval("x").num(), 0);
 
     EXPECT_EQ(eval("(set! x 4)").type(), VALUE_VOID);
-    EXPECT_EQ(env_->get("x").num(), 4);
+    EXPECT_EQ(eval("x").num(), 4);
 
     EXPECT_EQ(eval("(set! x (+ x 1))").type(), VALUE_VOID);
-    EXPECT_EQ(env_->get("x").num(), 5);
+    EXPECT_EQ(eval("x").num(), 5);
 }
 
 TEST_F(ExpressionTest, VariableExpression1) {

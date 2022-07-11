@@ -34,7 +34,7 @@ using ExpressionPtr = std::shared_ptr<Expression>;
 class Expression {
 public:
     virtual Value eval(const EnvironmentPtr &env) const = 0;
-    virtual Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const = 0;
+    virtual Value accept(ExpressionVisitor &visitor) const = 0;
     static ExpressionPtr create(const ParseTreePointer &parse_tree);
 };
 
@@ -76,7 +76,7 @@ public:
 
     ValueExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
-    Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
+    Value accept(ExpressionVisitor &visitor) const;
 
     Value value() const {
         return value_;
@@ -100,7 +100,7 @@ public:
 
     DefineExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
-    Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
+    Value accept(ExpressionVisitor &visitor) const;
 
     std::string name() const {
         return name_;
@@ -132,7 +132,7 @@ public:
 
     VariableExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
-    Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
+    Value accept(ExpressionVisitor &visitor) const;
 
     const std::string name() const;
 
@@ -147,7 +147,7 @@ public:
 
     ApplyExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
-    Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
+    Value accept(ExpressionVisitor &visitor) const;
 
     ExpressionPtr function() const {
         return function_;
@@ -174,7 +174,7 @@ class CondExpression : public Expression {
 public:
     CondExpression(const ParseTreePointer &parse_tree);
     Value eval(const EnvironmentPtr &env) const;
-    Value accept(ExpressionVisitor &visitor, const EnvironmentPtr &env) const;
+    Value accept(ExpressionVisitor &visitor) const;
 
     ExpressionPtr condition(size_t i) const {
         return conditions_[i];
