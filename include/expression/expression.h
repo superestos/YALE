@@ -33,7 +33,6 @@ using ExpressionPtr = std::shared_ptr<Expression>;
 
 class Expression {
 public:
-    //virtual Value eval(const EnvironmentPtr &env) const = 0;
     virtual Value accept(ExpressionVisitor &visitor) const = 0;
     static ExpressionPtr create(const ParseTreePointer &parse_tree);
 };
@@ -75,7 +74,6 @@ public:
     ValueExpression(Value value): value_(value) {}
 
     ValueExpression(const ParseTreePointer &parse_tree);
-    Value eval(const EnvironmentPtr &env) const;
     Value accept(ExpressionVisitor &visitor) const;
 
     Value value() const {
@@ -99,7 +97,6 @@ public:
         name_{name}, arg_names_{arg_names}, expr_{expr}, type_{type} {}
 
     DefineExpression(const ParseTreePointer &parse_tree);
-    //Value eval(const EnvironmentPtr &env) const;
     Value accept(ExpressionVisitor &visitor) const;
 
     std::string name() const {
@@ -131,7 +128,6 @@ public:
         name_{name} {}
 
     VariableExpression(const ParseTreePointer &parse_tree);
-    Value eval(const EnvironmentPtr &env) const;
     Value accept(ExpressionVisitor &visitor) const;
 
     const std::string name() const;
@@ -146,7 +142,6 @@ public:
         function_{function}, args_{args} {}
 
     ApplyExpression(const ParseTreePointer &parse_tree);
-    //Value eval(const EnvironmentPtr &env) const;
     Value accept(ExpressionVisitor &visitor) const;
 
     ExpressionPtr function() const {
@@ -173,7 +168,6 @@ private:
 class CondExpression : public Expression {
 public:
     CondExpression(const ParseTreePointer &parse_tree);
-    //Value eval(const EnvironmentPtr &env) const;
     Value accept(ExpressionVisitor &visitor) const;
 
     ExpressionPtr condition(size_t i) const {

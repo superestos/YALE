@@ -99,10 +99,6 @@ Value ValueExpression::parse_lambda(const ParseTreePointer &parse_tree) {
     return Value(Procedure::create(expr, names));
 }
 
-Value ValueExpression::eval(const EnvironmentPtr &env) const {
-    return value_;
-}
-
 Value ValueExpression::accept(ExpressionVisitor &visitor) const {
     return visitor.visitValueExpression(*this);
 }
@@ -138,17 +134,7 @@ DefineExpression::DefineExpression(const ParseTreePointer &parse_tree) {
 
     expr_ = Expression::create(children[2]);
 }
-/*
-Value DefineExpression::eval(const EnvironmentPtr &env) const {
-    Value value = arg_names_.empty()? expr_->eval(env): Value(Procedure::create(expr_, arg_names_));
-    if (type_ == DEFINE) {
-        env->define(name_, value);
-    } else {
-        env->set(name_, value);
-    }
-    return Value();
-}
-*/
+
 Value DefineExpression::accept(ExpressionVisitor &visitor) const {
     return visitor.visitDefineExpression(*this);
 }
@@ -162,10 +148,6 @@ VariableExpression::VariableExpression(const ParseTreePointer &parse_tree) {
 
 const std::string VariableExpression::name() const {
     return name_;
-}
-
-Value VariableExpression::eval(const EnvironmentPtr &env) const {
-    return env->get(name_);
 }
 
 Value VariableExpression::accept(ExpressionVisitor &visitor) const {
@@ -183,14 +165,7 @@ ApplyExpression::ApplyExpression(const ParseTreePointer &parse_tree) {
         args_.emplace_back(Expression::create(children[i]));
     }
 }
-/*
-Value ApplyExpression::eval(const EnvironmentPtr &env) const {
-    Value value = function_->eval(env);
-    assert(value.type() == VALUE_PROCEDURE);
 
-    return value.procedure()->call(env, args_);
-}
-*/
 Value ApplyExpression::accept(ExpressionVisitor &visitor) const {
     return visitor.visitApplyExpression(*this);
 }
@@ -210,21 +185,7 @@ CondExpression::CondExpression(const ParseTreePointer &parse_tree) {
         exprs_.emplace_back(Expression::create(subexpr->children()[1]));
     }
 }
-/*
-Value CondExpression::eval(const EnvironmentPtr &env) const {
-    for (size_t i = 0; i < conditions_.size(); i++) {
-        Value satisified = conditions_[i]->eval(env);
-        assert(satisified.type() == VALUE_NUM);
 
-        if (satisified.num() != 0) {
-            return exprs_[i]->accept(env);
-        }
-    }
-
-    assert(false);
-    return Value();
-}
-*/
 Value CondExpression::accept(ExpressionVisitor &visitor) const {
     return visitor.visitCondExpression(*this);
 }
