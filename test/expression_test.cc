@@ -9,9 +9,6 @@
 
 class ExpressionTest : public ::testing::Test {
 protected:
-    EnvironmentManager manager_{ENV_BUILTIN};
-    EnvironmentPtr env_{manager_.global()};
-
     std::stringstream input_;
     Scanner scanner_{input_};
     Parser parser_;
@@ -31,7 +28,6 @@ protected:
     }
 
     auto eval(std::string str) {
-        //return expr(str)->eval(env_);
         return expr(str)->accept(visitor_);
     }
 
@@ -40,26 +36,26 @@ protected:
         return dynamic_cast<T *>(ptr) != nullptr;
     }
 };
-/*
+
 TEST_F(ExpressionTest, ValueExpressionUsingSyntaxTree) {
     ParseTreePointer num = ParseTreeNode::create(Token("42"));
     ParseTreePointer quote = ParseTreeNode::create(Token("'hi"));
 
-    EXPECT_EQ(ValueExpression(num).eval(env_).num(), 42);
-    EXPECT_EQ(ValueExpression(quote).eval(env_).quote(), "hi");
+    EXPECT_EQ(ValueExpression(num).accept(visitor_).num(), 42);
+    EXPECT_EQ(ValueExpression(quote).accept(visitor_).quote(), "hi");
 
-    EXPECT_EQ(ValueExpression(88).eval(env_).num(), 88);
-    EXPECT_EQ(ValueExpression(Value("lisp")).eval(env_).quote(), "lisp");
+    EXPECT_EQ(ValueExpression(88).accept(visitor_).num(), 88);
+    EXPECT_EQ(ValueExpression(Value("lisp")).accept(visitor_).quote(), "lisp");
 
     read("24");
     auto num_expr = Expression::create(parser_.next());
     EXPECT_EQ(isinstance<ValueExpression>(num_expr.get()), true);
-    EXPECT_EQ(num_expr->eval(env_).num(), 24);
+    EXPECT_EQ(num_expr->accept(visitor_).num(), 24);
 
     read("'xyz");
     auto quote_expr = Expression::create(parser_.next());
     EXPECT_EQ(isinstance<ValueExpression>(quote_expr.get()), true);
-    EXPECT_EQ(quote_expr->eval(env_).quote(), "xyz");
+    EXPECT_EQ(quote_expr->accept(visitor_).quote(), "xyz");
 }
 
 TEST_F(ExpressionTest, DefineExpression1) {
@@ -67,23 +63,23 @@ TEST_F(ExpressionTest, DefineExpression1) {
     ExpressionPtr x = std::shared_ptr<Expression>(new ValueExpression(num));
 
     DefineExpression def("x", x);
-    Value value = def.eval(env_);
+    Value value = def.accept(visitor_);
 
     EXPECT_EQ(value.type(), VALUE_VOID);
-    EXPECT_EQ(env_->get("x").num(), -42);
+    EXPECT_EQ(visitor_.env()->get("x").num(), -42);
 }
 
 TEST_F(ExpressionTest, DefineExpression2) {
     read("(define val 42)");
 
     auto def = Expression::create(parser_.next());
-    Value value = def->eval(env_);
+    Value value = def->accept(visitor_);
 
     EXPECT_EQ(isinstance<DefineExpression>(def.get()), true);
     EXPECT_EQ(value.type(), VALUE_VOID);
-    EXPECT_EQ(env_->get("val").num(), 42);
+    EXPECT_EQ(visitor_.env()->get("val").num(), 42);
 }
-*/
+
 TEST_F(ExpressionTest, SetExpression) {
     eval("(define x 0)");
     EXPECT_EQ(eval("x").num(), 0);
@@ -94,24 +90,24 @@ TEST_F(ExpressionTest, SetExpression) {
     EXPECT_EQ(eval("(set! x (+ x 1))").type(), VALUE_VOID);
     EXPECT_EQ(eval("x").num(), 5);
 }
-/*
+
 TEST_F(ExpressionTest, VariableExpression1) {
     ExpressionPtr var = std::shared_ptr<Expression>(new VariableExpression("x"));
 
-    env_->define("x", 314);
-    EXPECT_EQ(var->eval(env_).type(), VALUE_NUM);
-    EXPECT_EQ(var->eval(env_).num(), 314);
+    visitor_.env()->define("x", 314);
+    EXPECT_EQ(var->accept(visitor_).type(), VALUE_NUM);
+    EXPECT_EQ(var->accept(visitor_).num(), 314);
 }
 
 TEST_F(ExpressionTest, VariableExpression2) {
     read("x");
 
-    env_->define("x", 314);
+    visitor_.env()->define("x", 314);
     auto var = Expression::create(parser_.next());
 
     EXPECT_EQ(isinstance<VariableExpression>(var.get()), true);
-    EXPECT_EQ(var->eval(env_).type(), VALUE_NUM);
-    EXPECT_EQ(var->eval(env_).num(), 314);
+    EXPECT_EQ(var->accept(visitor_).type(), VALUE_NUM);
+    EXPECT_EQ(var->accept(visitor_).num(), 314);
 }
 
 TEST_F(ExpressionTest, ApplyExpression1) {
@@ -120,7 +116,7 @@ TEST_F(ExpressionTest, ApplyExpression1) {
     
     ExpressionPtr apply = std::shared_ptr<Expression>(new ApplyExpression(expr("+"), {num1, num2}));
 
-    EXPECT_EQ(apply->eval(env_).num(), 9);
+    EXPECT_EQ(apply->accept(visitor_).num(), 9);
 }
 
 TEST_F(ExpressionTest, ApplyExpression2) {
@@ -129,26 +125,26 @@ TEST_F(ExpressionTest, ApplyExpression2) {
     auto apply = Expression::create(parser_.next());
 
     EXPECT_EQ(isinstance<ApplyExpression>(apply.get()), true);
-    EXPECT_EQ(apply->eval(env_).num(), 10);
+    EXPECT_EQ(apply->accept(visitor_).num(), 10);
 }
 
 TEST_F(ExpressionTest, DefineProcedureAndApply1) {
     auto def = expr("(define (id x) x)");
     EXPECT_EQ(isinstance<DefineExpression>(def.get()), true);
-    EXPECT_EQ(def->eval(env_).type(), VALUE_VOID);
+    EXPECT_EQ(def->accept(visitor_).type(), VALUE_VOID);
 
     ApplyExpression apply(expr("id"), {expr("42")});
-    EXPECT_EQ(apply.eval(env_).num(), 42);
+    EXPECT_EQ(apply.accept(visitor_).num(), 42);
 }
 
 TEST_F(ExpressionTest, DefineProcedureAndApply2) {
     DefineExpression def("id", expr("x"), {"x"});
-    def.eval(env_);
+    def.accept(visitor_);
 
     ApplyExpression apply(expr("id"), {expr("'abc")});
-    EXPECT_EQ(apply.eval(env_).quote(), "abc");
+    EXPECT_EQ(apply.accept(visitor_).quote(), "abc");
 }
-*/
+
 TEST_F(ExpressionTest, CondExpression) {
     eval("(define (f x) (cond ((< x 10) (+ x 10)) ((< x 100) (+ x 100)) (else (+ x 1000))))");
 
@@ -156,16 +152,16 @@ TEST_F(ExpressionTest, CondExpression) {
     EXPECT_EQ(eval("(f 5)").num(), 15);
     EXPECT_EQ(eval("(f 2000)").num(), 3000);
 }
-/*
+
 TEST_F(ExpressionTest, LambdaExpressionBasics) {
     auto lambda = expr("(lambda (x) (+ x x))");
     EXPECT_EQ(isinstance<ValueExpression>(lambda.get()), true);
 
     auto apply = expr(("((lambda (x) (+ x x)) 5)"));
     EXPECT_EQ(isinstance<ApplyExpression>(apply.get()), true);
-    EXPECT_EQ(apply->eval(env_).num(), 10);
+    EXPECT_EQ(apply->accept(visitor_).num(), 10);
 }
-*/
+
 TEST_F(ExpressionTest, LambdaExpressionMultiVariable) {
     auto lambda = expr("(lambda (x y) (+ x y))");
     EXPECT_EQ(isinstance<ValueExpression>(lambda.get()), true);
