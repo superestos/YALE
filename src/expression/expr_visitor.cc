@@ -26,7 +26,7 @@ Value ExpressionVisitor::visitApplyExpression(const ApplyExpression &expr) {
     Value value = expr.function()->accept(*this);
     assert(value.type() == VALUE_PROCEDURE);
     
-    return value.procedure()->call(env_, expr.args());
+    return value.procedure()->call(*this, expr.args());
 }
 
 Value ExpressionVisitor::visitCondExpression(const CondExpression &expr) {

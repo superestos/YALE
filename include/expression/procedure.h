@@ -3,11 +3,12 @@
 #include <vector>
 
 #include "expression/expression.h"
+#include "expression/expr_visitor.h"
 #include "environment/environment.h"
 
 class Procedure {
 public:
-    virtual Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const = 0;
+    virtual Value call(ExpressionVisitor &visitor, const std::vector<ExpressionPtr>& args) const = 0;
 
     template <typename T>
     static ProcedurePtr create() {
@@ -17,8 +18,8 @@ public:
     static ProcedurePtr create(ExpressionPtr expr, const std::vector<std::string>& names);
 
 protected:
-    std::pair<Value, Value> eval_binary_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
-    std::vector<Value> eval_variant_args(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
+    std::pair<Value, Value> eval_binary_args(ExpressionVisitor &visitor, const std::vector<ExpressionPtr>& args) const;
+    std::vector<Value> eval_variant_args(ExpressionVisitor &visitor, const std::vector<ExpressionPtr>& args) const;
 };
 
 class LambdaProcedure : public Procedure {
@@ -26,7 +27,7 @@ public:
     LambdaProcedure(ExpressionPtr expr, const std::vector<std::string>& names):
         expr_{expr}, names_{names} {}
 
-    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const;
+    Value call(ExpressionVisitor &visitor, const std::vector<ExpressionPtr>& args) const;
 
 private:
     ExpressionPtr expr_;
@@ -39,7 +40,7 @@ private:
 #define def_procedure_class(name) \
 class concat(name, Procedure) : public Procedure { \
 public: \
-    Value call(const EnvironmentPtr &env, const std::vector<ExpressionPtr>& args) const; \
+    Value call(ExpressionVisitor &visitor, const std::vector<ExpressionPtr>& args) const; \
 };
 
 def_procedure_class(Add)

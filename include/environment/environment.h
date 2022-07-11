@@ -12,7 +12,9 @@ public:
     void set(const std::string &name, Value value);
     const Value& get(const std::string &name) const;
     bool existed(const std::string &name) const;
-    void set_enclosing(const EnvironmentPtr &enclosing);
+
+    //void set_enclosing(const EnvironmentPtr &enclosing);
+    EnvironmentPtr get_enclosing();
 
 private:
     bool local_existed(const std::string &name) const;

@@ -28,13 +28,18 @@ const Value& Environment::get(const std::string &name) const {
 bool Environment::existed(const std::string &name) const {
     return local_existed(name) || (enclosing_.get() != nullptr && enclosing_->existed(name));
 }
-
+/*
 void Environment::set_enclosing(const EnvironmentPtr &enclosing) {
     if (enclosing.get() == enclosing_.get()) {
         return;
     }
 
     enclosing_ = enclosing;
+}
+*/
+
+EnvironmentPtr Environment::get_enclosing() {
+    return enclosing_;
 }
 
 bool Environment::local_existed(const std::string &name) const {
