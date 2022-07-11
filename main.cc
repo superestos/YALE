@@ -4,6 +4,7 @@
 #include "scanner/scanner.h"
 #include "parser/parser.h"
 #include "environment/environment.h"
+#include "expression/expr_visitor.h"
 
 struct Evaluator {
     EnvironmentManager manager_{ENV_BUILTIN};
@@ -11,6 +12,8 @@ struct Evaluator {
 
     Scanner scanner_;
     Parser parser_;
+
+    ExpressionVisitor visitor_;
 
     Evaluator(std::istream &is): scanner_{is} {}
 
@@ -31,7 +34,7 @@ struct Evaluator {
 
     auto eval() {
         assert(parser_.has_next());
-        return Expression::create(parser_.next())->eval(env_);
+        return Expression::create(parser_.next())->accept(visitor_, env_);
     }
 };
 
