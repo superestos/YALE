@@ -24,7 +24,7 @@ public:
     }
 
     ExpressionVisitor(EnvironmentConfig config = ENV_BUILTIN):
-        env_manager_{ENV_BUILTIN}
+        env_manager_{config}
     {
         env_ = env_manager_.global();
     }

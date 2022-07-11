@@ -142,7 +142,6 @@ TEST_F(ProcedureTest, DefinedAcc) {
     eval("(define a2 (acc 20))");
     EXPECT_EQ(eval("(a2 10)").num(), 30);
     EXPECT_EQ(eval("(a2 20)").num(), 50);
-
     EXPECT_EQ(eval("(a1 20)").num(), 60);
 }
 

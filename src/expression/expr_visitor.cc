@@ -23,10 +23,17 @@ Value ExpressionVisitor::visitVariableExpression(const VariableExpression &expr)
 }
 
 Value ExpressionVisitor::visitApplyExpression(const ApplyExpression &expr) {
-    Value value = expr.function()->accept(*this);
-    assert(value.type() == VALUE_PROCEDURE);
+    Value func = expr.function()->accept(*this);
+    assert(func.type() == VALUE_PROCEDURE);
+
+    EnvironmentPtr restored_env = env_;
+    if (func.env().get() != nullptr) {
+        env_ = func.env();
+    }
     
-    return value.procedure()->call(*this, expr.args());
+    Value result = func.procedure()->call(*this, expr.args());
+    env_ = restored_env;
+    return result;
 }
 
 Value ExpressionVisitor::visitCondExpression(const CondExpression &expr) {

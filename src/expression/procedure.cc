@@ -127,11 +127,11 @@ Value LambdaProcedure::call(ExpressionVisitor &visitor, const std::vector<Expres
     }
 
     Value value = expr_->accept(visitor);
-    visitor.pop_env();
 
     if (value.type() == VALUE_PROCEDURE) {
-        return Value(value.procedure(), nullptr);
+        return Value(value.procedure(), visitor.env());
     }
+    visitor.pop_env();
 
     return value;
 }
